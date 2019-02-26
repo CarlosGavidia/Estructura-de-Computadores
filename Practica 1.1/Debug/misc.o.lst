@@ -1,0 +1,113 @@
+   1              	# 1 "../misc.asm"
+   1              	
+   0              	
+   0              	
+   0              	
+   2              		.equ COEF1, 3483
+   3              		.equ COEF2, 11718
+   4              		.equ COEF3, 1183
+   5              		.equ COEF4, 16384
+   6              	
+   7              		.text
+   8              	
+   9              		.global rgb2gray
+  10              		.global div16384
+  11              		.global apply_gaussian
+  12              	
+  13              	rgb2gray:
+  14 0000 F0402DE9 		push {r4,r5,r6,r7,lr}
+  15              	
+  16 0004 0010A0E1 		mov r1, r0 // se guarda el puntero que le llega por parametro
+  17 0008 B4509FE5 		ldr r5, =COEF1// se cargan las constantes
+  18 000c B4609FE5 		ldr r6,=COEF2
+  19 0010 B4709FE5 		ldr r7,=COEF3
+  20 0014 0020D1E5 		ldrb r2, [r1] // se carga el dato(b ya que es char y solo cupa un bit)
+  21 0018 950202E0 		mul r2,r5,r2 //COEF1*pixel->R
+  22 001c 011081E2 		add r1,r1,#1 // sesuma uno a la direccion para acceder al siguiente elemento.
+  23 0020 0030D1E5 		ldrb r3, [r1]
+  24 0024 960303E0 		mul r3,r6,r3 //COEF2*pixel->R
+  25 0028 011081E2 		add r1, r1,#1
+  26 002c 0040D1E5 		ldrb r4, [r1]
+  27 0030 970404E0 		mul r4,r7,r4 //COEF3*pixel->R
+  28 0034 030082E0 		add r0,r2,r3 // se suma lo que nos ha dado al multiplicar
+  29 0038 040080E0 		add r0, r0,r4
+  30              	
+  31 003c FEFFFFEB 		bl div16384 // se llama para dividir
+  32              	
+  33 0040 F080BDE8 		pop {r4,r5,r6,r7,pc}
+  34              	
+  35              	div16384:
+  36              	
+  37 0044 0010A0E3 		mov r1 ,#0 // cociente=0
+  38 0048 010950E3 		while:cmp r0, #COEF4 //se guarda 16384
+  39 004c 020000BA 				blt fin_while // cuando sea menor sale
+  40 0050 010940E2 				sub r0, r0, #COEF4 // va restando lo que le pasas por parametro(numerador) menos la constante
+  41 0054 011081E2 				add r1, r1, #1 // se suma 1 para el contador
+  42 0058 FAFFFFEA 				b while
+  43              	
+  44              			fin_while: // en r1 esta el cociente y se mete en r0 para devolverlo
+  45 005c 0100A0E1 			 mov r0,r1
+  46              	
+  47              	
+  48 0060 0EF0A0E1 		mov pc,lr
+  49              	
+  50              	apply_gaussian:
+  51 0064 F04B2DE9 		push {r4,r5,r6,r7,r8,r9,lr,fp}
+  52              	
+  53 0068 0040A0E3 		mov r4,#0// i=0
+  54              	
+  55 006c 030054E1 		for1:cmp r4,r3 // i < height
+  56 0070 110000AA 			bge fin_for1
+  57 0074 0050A0E3 			mov r5,#0 // j=0
+  58              	
+  59 0078 020055E1 			for2:cmp r5,r2//j < width
+  60 007c 0C0000AA 				bge fin_for2
+  61              	
+  62 0080 3F002DE9 				push {r0-r5}//para que no se pierdan los datos en esos registros que hemos tocado antes
+  63 0084 0210A0E1 				mov r1,r2// en r1 = width
+  64 0088 0320A0E1 				mov r2,r3 // en r2 = height
+  65 008c 0430A0E1 				mov r3,r4 // en r3 = i
+  66              	
+  67 0090 04502DE5 				push {r5}// para que r5 no se modifique al llamar a gaussian
+  68 0094 FEFFFFEB 				bl gaussian
+  69 0098 04509DE4 				pop {r5}
+  70              	
+  71 009c 0060A0E1 				mov r6,r0// el entero que devuelve esa funcion se guarda en r6
+  72 00a0 3F00BDE8 				pop {r0-r5}//recupera los registros
+  73              	
+  74 00a4 945227E0 				mla r7,r4,r2,r5//i * width + j
+  75 00a8 0760C1E7 				strb r6,[r1,r7]// se guarda en la direccion im2[], en la posicion de i * width + j, y se guarda 
+  76 00ac 015085E2 				add r5,r5,#1 // j++
+  77 00b0 F0FFFFEA 				b for2
+  78              	
+  79              				fin_for2:
+  80 00b4 014084E2 				add r4,r4,#1//i++
+  81 00b8 EBFFFFEA 				b for1
+  82              	
+  83              			fin_for1:
+  84 00bc F04BBDE8 			pop {r4,r5,r6,r7,r8,r9,lr,fp}
+  85 00c0 0EF0A0E1 			mov pc,lr
+  86              	
+  87 00c4 9B0D0000 	.end
+  87      C62D0000 
+  87      9F040000 
+DEFINED SYMBOLS
+         ../misc.asm:2      *ABS*:00000d9b COEF1
+         ../misc.asm:3      *ABS*:00002dc6 COEF2
+         ../misc.asm:4      *ABS*:0000049f COEF3
+         ../misc.asm:5      *ABS*:00004000 COEF4
+         ../misc.asm:13     .text:00000000 rgb2gray
+         ../misc.asm:35     .text:00000044 div16384
+         ../misc.asm:50     .text:00000064 apply_gaussian
+         ../misc.asm:14     .text:00000000 $a
+         ../misc.asm:38     .text:00000048 while
+         ../misc.asm:44     .text:0000005c fin_while
+         ../misc.asm:55     .text:0000006c for1
+         ../misc.asm:83     .text:000000bc fin_for1
+         ../misc.asm:59     .text:00000078 for2
+         ../misc.asm:79     .text:000000b4 fin_for2
+         ../misc.asm:87     .text:000000c4 $d
+                   .debug_aranges:0000000c $d
+
+UNDEFINED SYMBOLS
+gaussian
