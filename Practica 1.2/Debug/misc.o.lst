@@ -1,0 +1,162 @@
+   1              	# 1 "../misc.asm"
+   1              	
+   0              	
+   0              	
+   0              	
+   2              		.equ COEF1, 3483
+   3              		.equ COEF2, 11718
+   4              		.equ COEF3, 1183
+   5              		.equ COEF4, 16384
+   6              	
+   7              		.text
+   8              	
+   9              		.global rgb2gray
+  10              		.global div16384
+  11              		.global apply_gaussian
+  12              		.global MaximoGris
+  13              	
+  14              	rgb2gray:
+  15 0000 F0402DE9 		push {r4,r5,r6,r7,lr}
+  16              	
+  17 0004 0010A0E1 		mov r1, r0 // se guarda el puntero que le llega por parametro
+  18 0008 18519FE5 		ldr r5, =COEF1// se cargan las constantes
+  19 000c 18619FE5 		ldr r6,=COEF2
+  20 0010 18719FE5 		ldr r7,=COEF3
+  21 0014 0020D1E5 		ldrb r2, [r1] // se carga el dato(b ya que es char y solo cupa un bit)
+  22 0018 950202E0 		mul r2,r5,r2 //COEF1*pixel->R
+  23 001c 011081E2 		add r1,r1,#1 // sesuma uno a la direccion para acceder al siguiente elemento.
+  24 0020 0030D1E5 		ldrb r3, [r1]
+  25 0024 960303E0 		mul r3,r6,r3 //COEF2*pixel->R
+  26 0028 011081E2 		add r1, r1,#1
+  27 002c 0040D1E5 		ldrb r4, [r1]
+  28 0030 970404E0 		mul r4,r7,r4 //COEF3*pixel->R
+  29 0034 030082E0 		add r0,r2,r3 // se suma lo que nos ha dado al multiplicar
+  30 0038 040080E0 		add r0, r0,r4
+  31              	
+  32 003c FEFFFFEB 		bl div16384 // se llama para dividir
+  33              	
+  34 0040 F080BDE8 		pop {r4,r5,r6,r7,pc}
+  35              	
+  36              	div16384:
+  37              	
+  38 0044 0010A0E3 		mov r1 ,#0 // cociente=0
+  39 0048 010950E3 		while:cmp r0, #COEF4 //se guarda 16384
+  40 004c 020000BA 				blt fin_while // cuando sea menor sale
+  41 0050 010940E2 				sub r0, r0, #COEF4 // va restando lo que le pasas por parametro(numerador) menos la constante
+  42 0054 011081E2 				add r1, r1, #1 // se suma 1 para el contador
+  43 0058 FAFFFFEA 				b while
+  44              	
+  45              			fin_while: // en r1 esta el cociente y se mete en r0 para devolverlo
+  46 005c 0100A0E1 			 mov r0,r1
+  47              	
+  48              	
+  49 0060 0EF0A0E1 		mov pc,lr
+  50              	
+  51              	apply_gaussian:
+  52 0064 F0402DE9 		push {r4,r5,r6,r7,lr}
+  53              	
+  54 0068 0040A0E3 		mov r4,#0// i=0
+  55              	
+  56 006c 030054E1 		for1:cmp r4,r3 // i < height
+  57 0070 110000AA 			bge fin_for1
+  58 0074 0050A0E3 			mov r5,#0 // j=0
+  59              	
+  60 0078 020055E1 			for2:cmp r5,r2//j < width
+  61 007c 0C0000AA 				bge fin_for2
+  62              	
+  63 0080 3F002DE9 				push {r0-r5}//para que no se pierdan los datos en esos registros que hemos tocado antes
+  64 0084 0210A0E1 				mov r1,r2// en r1 = width
+  65 0088 0320A0E1 				mov r2,r3 // en r2 = height
+  66 008c 0430A0E1 				mov r3,r4 // en r3 = i
+  67              	
+  68 0090 04502DE5 				push {r5}// para que r5 no se modifique al llamar a gaussian
+  69 0094 FEFFFFEB 				bl gaussian
+  70 0098 04509DE4 				pop {r5}
+  71              	
+  72 009c 0060A0E1 				mov r6,r0// el entero que devuelve esa funcion se guarda en r6
+  73 00a0 3F00BDE8 				pop {r0-r5}//recupera los registros
+  74              	
+  75 00a4 945227E0 				mla r7,r4,r2,r5//i * width + j
+  76 00a8 0760C1E7 				strb r6,[r1,r7]// se guarda en la direccion im2[], en la posicion de i * width + j, y se guarda 
+  77 00ac 015085E2 				add r5,r5,#1 // j++
+  78 00b0 F0FFFFEA 				b for2
+  79              	
+  80              				fin_for2:
+  81 00b4 014084E2 				add r4,r4,#1//i++
+  82 00b8 EBFFFFEA 				b for1
+  83              	
+  84              			fin_for1:
+  85 00bc F040BDE8 			pop {r4,r5,r6,r7,lr}
+  86 00c0 0EF0A0E1 			mov pc,lr
+  87              	
+  88              	//MaximoGris(imagenGris,N,M,imagenMax);
+  89              	MaximoGris:
+  90 00c4 F0032DE9 		push {r4-r9}
+  91              		//r0 imagen gris
+  92              		//r1 filas
+  93              		//r2columna
+  94              		//r3 direccion de imagenMax
+  95              	
+  96 00c8 0050A0E3 		mov r5, #0 //i=0
+  97 00cc 0090A0E3 		mov r9, #0 //columna max
+  98 00d0 010055E1 		forMax1:cmp r5,r1 // i < filas
+  99 00d4 110000AA 			bge fin_forMax1
+ 100 00d8 0040A0E3 			mov r4, #0 // max=0
+ 101 00dc 0060A0E3 			mov r6,#0 // j=0
+ 102              	
+ 103 00e0 020056E1 			forMax2:cmp r6,r2//j < columnas
+ 104 00e4 080000AA 				bge fin_forMax2
+ 105              	
+ 106 00e8 956227E0 				mla r7,r5,r2,r6//i * width + j
+ 107 00ec 0780D0E7 				ldrb r8,[r0,r7]
+ 108 00f0 040058E1 				cmp r8,r4
+ 109 00f4 020000DA 				ble incrementoJ
+ 110 00f8 0840A0E1 				mov r4,r8
+ 111 00fc 0690A0E1 				mov r9, r6
+ 112 0100 FFFFFFEA 				b incrementoJ
+ 113              	
+ 114              			incrementoJ:
+ 115 0104 016086E2 				add r6,r6,#1 // j++
+ 116 0108 F4FFFFEA 				b forMax2
+ 117              	
+ 118              			fin_forMax2:
+ 119 010c 009083E5 				str r9,[r3]
+ 120 0110 0440C3E5 				strb r4,[r3,#4]
+ 121 0114 083083E2 				add r3,r3,#8
+ 122 0118 015085E2 				add r5,r5,#1//i++
+ 123 011c EBFFFFEA 				b forMax1
+ 124              	
+ 125              		fin_forMax1:
+ 126 0120 F003BDE8 		pop {r4-r9}
+ 127 0124 0EF0A0E1 		mov pc,lr
+ 128              	
+ 129              	
+ 130 0128 9B0D0000 	.end
+ 130      C62D0000 
+ 130      9F040000 
+DEFINED SYMBOLS
+         ../misc.asm:2      *ABS*:00000d9b COEF1
+         ../misc.asm:3      *ABS*:00002dc6 COEF2
+         ../misc.asm:4      *ABS*:0000049f COEF3
+         ../misc.asm:5      *ABS*:00004000 COEF4
+         ../misc.asm:14     .text:00000000 rgb2gray
+         ../misc.asm:36     .text:00000044 div16384
+         ../misc.asm:51     .text:00000064 apply_gaussian
+         ../misc.asm:89     .text:000000c4 MaximoGris
+         ../misc.asm:15     .text:00000000 $a
+         ../misc.asm:39     .text:00000048 while
+         ../misc.asm:45     .text:0000005c fin_while
+         ../misc.asm:56     .text:0000006c for1
+         ../misc.asm:84     .text:000000bc fin_for1
+         ../misc.asm:60     .text:00000078 for2
+         ../misc.asm:80     .text:000000b4 fin_for2
+         ../misc.asm:98     .text:000000d0 forMax1
+         ../misc.asm:125    .text:00000120 fin_forMax1
+         ../misc.asm:103    .text:000000e0 forMax2
+         ../misc.asm:118    .text:0000010c fin_forMax2
+         ../misc.asm:114    .text:00000104 incrementoJ
+         ../misc.asm:130    .text:00000128 $d
+                   .debug_aranges:0000000c $d
+
+UNDEFINED SYMBOLS
+gaussian
