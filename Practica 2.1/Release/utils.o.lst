@@ -1,0 +1,72 @@
+   1              		.cpu arm7tdmi
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 4
+  10              		.eabi_attribute 18, 4
+  11              		.file	"utils.c"
+  12              		.global	__aeabi_idiv
+  13              		.text
+  14              		.align	2
+  15              		.global	Delay
+  17              	Delay:
+  18              		@ Function supports interworking.
+  19              		@ args = 0, pretend = 0, frame = 0
+  20              		@ frame_needed = 1, uses_anonymous_args = 0
+  21 0000 0DC0A0E1 		mov	ip, sp
+  22 0004 000050E3 		cmp	r0, #0
+  23 0008 18D82DE9 		stmfd	sp!, {r3, r4, fp, ip, lr, pc}
+  24 000c 04B04CE2 		sub	fp, ip, #4
+  25 0010 1200001A 		bne	.L1
+  26 0014 50409FE5 		ldr	r4, .L5
+  27 0018 193EA0E3 		mov	r3, #400
+  28 001c 003084E5 		str	r3, [r4, #0]
+  29 0020 48209FE5 		ldr	r2, .L5+4
+  30 0024 48309FE5 		ldr	r3, .L5+8
+  31 0028 48109FE5 		ldr	r1, .L5+12
+  32 002c 002083E5 		str	r2, [r3, #0]
+  33 0030 041083E5 		str	r1, [r3, #4]
+  34 0034 081083E5 		str	r1, [r3, #8]
+  35 0038 3C109FE5 		ldr	r1, .L5+16
+  36 003c 001083E5 		str	r1, [r3, #0]
+  37 0040 002083E5 		str	r2, [r3, #0]
+  38 0044 081093E5 		ldr	r1, [r3, #8]
+  39 0048 FF1C61E2 		rsb	r1, r1, #65280
+  40 004c FF1081E2 		add	r1, r1, #255
+  41 0050 28009FE5 		ldr	r0, .L5+20
+  42 0054 0113A0E1 		mov	r1, r1, asl #6
+  43 0058 FEFFFFEB 		bl	__aeabi_idiv
+  44 005c 000084E5 		str	r0, [r4, #0]
+  45              	.L1:
+  46 0060 14D04BE2 		sub	sp, fp, #20
+  47 0064 18689DE8 		ldmfd	sp, {r3, r4, fp, sp, lr}
+  48 0068 1EFF2FE1 		bx	lr
+  49              	.L6:
+  50              		.align	2
+  51              	.L5:
+  52 006c 00000000 		.word	.LANCHOR0
+  53 0070 103F0000 		.word	16144
+  54 0074 0000D301 		.word	30605312
+  55 0078 FFFF0000 		.word	65535
+  56 007c 303F0000 		.word	16176
+  57 0080 00127A00 		.word	8000000
+  59              		.data
+  60              		.align	2
+  61              		.set	.LANCHOR0,. + 0
+  64              	delayLoopCount:
+  65 0000 90010000 		.word	400
+  66              		.ident	"GCC: (Sourcery G++ Lite 2011.03-42) 4.5.2"
+DEFINED SYMBOLS
+                            *ABS*:00000000 utils.c
+C:\Users\USUARI~1\AppData\Local\Temp\cc6zRc1M.s:14     .text:00000000 $a
+C:\Users\USUARI~1\AppData\Local\Temp\cc6zRc1M.s:17     .text:00000000 Delay
+C:\Users\USUARI~1\AppData\Local\Temp\cc6zRc1M.s:52     .text:0000006c $d
+C:\Users\USUARI~1\AppData\Local\Temp\cc6zRc1M.s:60     .data:00000000 $d
+C:\Users\USUARI~1\AppData\Local\Temp\cc6zRc1M.s:64     .data:00000000 delayLoopCount
+
+UNDEFINED SYMBOLS
+__aeabi_idiv

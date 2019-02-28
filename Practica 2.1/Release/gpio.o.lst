@@ -1,0 +1,348 @@
+   1              		.cpu arm7tdmi
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 4
+  10              		.eabi_attribute 18, 4
+  11              		.file	"gpio.c"
+  12              		.text
+  13              		.align	2
+  14              		.global	portB_conf
+  16              	portB_conf:
+  17              		@ Function supports interworking.
+  18              		@ args = 0, pretend = 0, frame = 0
+  19              		@ frame_needed = 0, uses_anonymous_args = 0
+  20              		@ link register save eliminated.
+  21 0000 0A0050E3 		cmp	r0, #10
+  22 0004 0000E083 		mvnhi	r0, #0
+  23 0008 1EFF2F81 		bxhi	lr
+  24 000c 020051E3 		cmp	r1, #2
+  25 0010 34309F05 		ldreq	r3, .L7
+  26 0014 08209305 		ldreq	r2, [r3, #8]
+  27 0018 0110A003 		moveq	r1, #1
+  28 001c 11008201 		orreq	r0, r2, r1, asl r0
+  29 0020 0400000A 		beq	.L6
+  30              	.L3:
+  31 0024 010051E3 		cmp	r1, #1
+  32 0028 0500001A 		bne	.L5
+  33 002c 18309FE5 		ldr	r3, .L7
+  34 0030 082093E5 		ldr	r2, [r3, #8]
+  35 0034 1100C2E1 		bic	r0, r2, r1, asl r0
+  36              	.L6:
+  37 0038 080083E5 		str	r0, [r3, #8]
+  38 003c 0000A0E3 		mov	r0, #0
+  39 0040 1EFF2FE1 		bx	lr
+  40              	.L5:
+  41 0044 0000E0E3 		mvn	r0, #0
+  42 0048 1EFF2FE1 		bx	lr
+  43              	.L8:
+  44              		.align	2
+  45              	.L7:
+  46 004c 0000D201 		.word	30539776
+  48              		.align	2
+  49              		.global	portB_write
+  51              	portB_write:
+  52              		@ Function supports interworking.
+  53              		@ args = 0, pretend = 0, frame = 0
+  54              		@ frame_needed = 0, uses_anonymous_args = 0
+  55              		@ link register save eliminated.
+  56 0050 0A0050E3 		cmp	r0, #10
+  57 0054 0000E083 		mvnhi	r0, #0
+  58 0058 1EFF2F81 		bxhi	lr
+  59 005c 010051E3 		cmp	r1, #1
+  60 0060 0B00008A 		bhi	.L13
+  61 0064 30309FE5 		ldr	r3, .L14
+  62 0068 000051E3 		cmp	r1, #0
+  63 006c 0C109315 		ldrne	r1, [r3, #12]
+  64 0070 0CC09305 		ldreq	ip, [r3, #12]
+  65 0074 0120A0E3 		mov	r2, #1
+  66 0078 12008111 		orrne	r0, r1, r2, asl r0
+  67 007c 1200CC01 		biceq	r0, ip, r2, asl r0
+  68 0080 0C008315 		strne	r0, [r3, #12]
+  69 0084 0C008305 		streq	r0, [r3, #12]
+  70 0088 0000A013 		movne	r0, #0
+  71 008c 0100A001 		moveq	r0, r1
+  72 0090 1EFF2FE1 		bx	lr
+  73              	.L13:
+  74 0094 0000E0E3 		mvn	r0, #0
+  75 0098 1EFF2FE1 		bx	lr
+  76              	.L15:
+  77              		.align	2
+  78              	.L14:
+  79 009c 0000D201 		.word	30539776
+  81              		.align	2
+  82              		.global	portG_conf
+  84              	portG_conf:
+  85              		@ Function supports interworking.
+  86              		@ args = 0, pretend = 0, frame = 0
+  87              		@ frame_needed = 0, uses_anonymous_args = 0
+  88              		@ link register save eliminated.
+  89 00a0 070050E3 		cmp	r0, #7
+  90 00a4 0000E083 		mvnhi	r0, #0
+  91 00a8 1EFF2F81 		bxhi	lr
+  92 00ac 8000A0E1 		mov	r0, r0, asl #1
+  93 00b0 030051E3 		cmp	r1, #3
+  94 00b4 01F19F97 		ldrls	pc, [pc, r1, asl #2]
+  95 00b8 280000EA 		b	.L24
+  96              	.L22:
+  97 00bc CC000000 		.word	.L18
+  98 00c0 EC000000 		.word	.L19
+  99 00c4 10010000 		.word	.L20
+ 100 00c8 38010000 		.word	.L21
+ 101              	.L18:
+ 102 00cc 0120A0E3 		mov	r2, #1
+ 103 00d0 01C080E2 		add	ip, r0, #1
+ 104 00d4 1200A0E1 		mov	r0, r2, asl r0
+ 105 00d8 122C80E1 		orr	r2, r0, r2, asl ip
+ 106 00dc 84309FE5 		ldr	r3, .L28
+ 107 00e0 401093E5 		ldr	r1, [r3, #64]
+ 108 00e4 0220C1E1 		bic	r2, r1, r2
+ 109 00e8 190000EA 		b	.L26
+ 110              	.L19:
+ 111 00ec 74309FE5 		ldr	r3, .L28
+ 112 00f0 401093E5 		ldr	r1, [r3, #64]
+ 113 00f4 01C080E2 		add	ip, r0, #1
+ 114 00f8 0120A0E3 		mov	r2, #1
+ 115 00fc 121CC1E1 		bic	r1, r1, r2, asl ip
+ 116 0100 401083E5 		str	r1, [r3, #64]
+ 117 0104 401093E5 		ldr	r1, [r3, #64]
+ 118 0108 120081E1 		orr	r0, r1, r2, asl r0
+ 119 010c 070000EA 		b	.L27
+ 120              	.L20:
+ 121 0110 50309FE5 		ldr	r3, .L28
+ 122 0114 401093E5 		ldr	r1, [r3, #64]
+ 123 0118 01C080E2 		add	ip, r0, #1
+ 124 011c 0120A0E3 		mov	r2, #1
+ 125 0120 121C81E1 		orr	r1, r1, r2, asl ip
+ 126 0124 401083E5 		str	r1, [r3, #64]
+ 127 0128 401093E5 		ldr	r1, [r3, #64]
+ 128 012c 1200C1E1 		bic	r0, r1, r2, asl r0
+ 129              	.L27:
+ 130 0130 400083E5 		str	r0, [r3, #64]
+ 131 0134 070000EA 		b	.L25
+ 132              	.L21:
+ 133 0138 0120A0E3 		mov	r2, #1
+ 134 013c 01C080E2 		add	ip, r0, #1
+ 135 0140 1200A0E1 		mov	r0, r2, asl r0
+ 136 0144 122C80E1 		orr	r2, r0, r2, asl ip
+ 137 0148 18309FE5 		ldr	r3, .L28
+ 138 014c 401093E5 		ldr	r1, [r3, #64]
+ 139 0150 012082E1 		orr	r2, r2, r1
+ 140              	.L26:
+ 141 0154 402083E5 		str	r2, [r3, #64]
+ 142              	.L25:
+ 143 0158 0000A0E3 		mov	r0, #0
+ 144 015c 1EFF2FE1 		bx	lr
+ 145              	.L24:
+ 146 0160 0000E0E3 		mvn	r0, #0
+ 147 0164 1EFF2FE1 		bx	lr
+ 148              	.L29:
+ 149              		.align	2
+ 150              	.L28:
+ 151 0168 0000D201 		.word	30539776
+ 153              		.align	2
+ 154              		.global	portG_eint_trig
+ 156              	portG_eint_trig:
+ 157              		@ Function supports interworking.
+ 158              		@ args = 0, pretend = 0, frame = 0
+ 159              		@ frame_needed = 0, uses_anonymous_args = 0
+ 160              		@ link register save eliminated.
+ 161 016c 070050E3 		cmp	r0, #7
+ 162 0170 0000E083 		mvnhi	r0, #0
+ 163 0174 1EFF2F81 		bxhi	lr
+ 164 0178 0001A0E1 		mov	r0, r0, asl #2
+ 165 017c 040051E3 		cmp	r1, #4
+ 166 0180 01F19F97 		ldrls	pc, [pc, r1, asl #2]
+ 167 0184 2C0000EA 		b	.L39
+ 168              	.L37:
+ 169 0188 9C010000 		.word	.L32
+ 170 018c B0010000 		.word	.L33
+ 171 0190 D0010000 		.word	.L34
+ 172 0194 F0010000 		.word	.L35
+ 173 0198 10020000 		.word	.L36
+ 174              	.L32:
+ 175 019c A0309FE5 		ldr	r3, .L42
+ 176 01a0 502093E5 		ldr	r2, [r3, #80]
+ 177 01a4 0710A0E3 		mov	r1, #7
+ 178 01a8 1100C2E1 		bic	r0, r2, r1, asl r0
+ 179 01ac 1F0000EA 		b	.L41
+ 180              	.L33:
+ 181 01b0 8C309FE5 		ldr	r3, .L42
+ 182 01b4 502093E5 		ldr	r2, [r3, #80]
+ 183 01b8 0710A0E3 		mov	r1, #7
+ 184 01bc 1120C2E1 		bic	r2, r2, r1, asl r0
+ 185 01c0 502083E5 		str	r2, [r3, #80]
+ 186 01c4 0110A0E3 		mov	r1, #1
+ 187 01c8 502093E5 		ldr	r2, [r3, #80]
+ 188 01cc 160000EA 		b	.L40
+ 189              	.L34:
+ 190 01d0 6C309FE5 		ldr	r3, .L42
+ 191 01d4 502093E5 		ldr	r2, [r3, #80]
+ 192 01d8 0710A0E3 		mov	r1, #7
+ 193 01dc 1120C2E1 		bic	r2, r2, r1, asl r0
+ 194 01e0 502083E5 		str	r2, [r3, #80]
+ 195 01e4 0210A0E3 		mov	r1, #2
+ 196 01e8 502093E5 		ldr	r2, [r3, #80]
+ 197 01ec 0E0000EA 		b	.L40
+ 198              	.L35:
+ 199 01f0 4C309FE5 		ldr	r3, .L42
+ 200 01f4 502093E5 		ldr	r2, [r3, #80]
+ 201 01f8 0710A0E3 		mov	r1, #7
+ 202 01fc 1120C2E1 		bic	r2, r2, r1, asl r0
+ 203 0200 502083E5 		str	r2, [r3, #80]
+ 204 0204 0410A0E3 		mov	r1, #4
+ 205 0208 502093E5 		ldr	r2, [r3, #80]
+ 206 020c 060000EA 		b	.L40
+ 207              	.L36:
+ 208 0210 2C309FE5 		ldr	r3, .L42
+ 209 0214 502093E5 		ldr	r2, [r3, #80]
+ 210 0218 0710A0E3 		mov	r1, #7
+ 211 021c 1120C2E1 		bic	r2, r2, r1, asl r0
+ 212 0220 502083E5 		str	r2, [r3, #80]
+ 213 0224 502093E5 		ldr	r2, [r3, #80]
+ 214 0228 0610A0E3 		mov	r1, #6
+ 215              	.L40:
+ 216 022c 110082E1 		orr	r0, r2, r1, asl r0
+ 217              	.L41:
+ 218 0230 500083E5 		str	r0, [r3, #80]
+ 219 0234 0000A0E3 		mov	r0, #0
+ 220 0238 1EFF2FE1 		bx	lr
+ 221              	.L39:
+ 222 023c 0000E0E3 		mvn	r0, #0
+ 223 0240 1EFF2FE1 		bx	lr
+ 224              	.L43:
+ 225              		.align	2
+ 226              	.L42:
+ 227 0244 0000D201 		.word	30539776
+ 229              		.align	2
+ 230              		.global	portG_write
+ 232              	portG_write:
+ 233              		@ Function supports interworking.
+ 234              		@ args = 0, pretend = 0, frame = 0
+ 235              		@ frame_needed = 0, uses_anonymous_args = 0
+ 236              		@ link register save eliminated.
+ 237 0248 070050E3 		cmp	r0, #7
+ 238 024c 04402DE5 		str	r4, [sp, #-4]!
+ 239 0250 1300008A 		bhi	.L49
+ 240 0254 010051E3 		cmp	r1, #1
+ 241 0258 1100008A 		bhi	.L49
+ 242 025c 4C309FE5 		ldr	r3, .L50
+ 243 0260 402093E5 		ldr	r2, [r3, #64]
+ 244 0264 80C0A0E1 		mov	ip, r0, asl #1
+ 245 0268 0340A0E3 		mov	r4, #3
+ 246 026c 144C02E0 		and	r4, r2, r4, asl ip
+ 247 0270 0120A0E3 		mov	r2, #1
+ 248 0274 120C54E1 		cmp	r4, r2, asl ip
+ 249 0278 0900001A 		bne	.L49
+ 250 027c 1200A0E1 		mov	r0, r2, asl r0
+ 251 0280 442093E5 		ldr	r2, [r3, #68]
+ 252 0284 000051E3 		cmp	r1, #0
+ 253 0288 02008011 		orrne	r0, r0, r2
+ 254 028c 0000C201 		biceq	r0, r2, r0
+ 255 0290 44008315 		strne	r0, [r3, #68]
+ 256 0294 44008305 		streq	r0, [r3, #68]
+ 257 0298 0000A013 		movne	r0, #0
+ 258 029c 0100A001 		moveq	r0, r1
+ 259 02a0 000000EA 		b	.L45
+ 260              	.L49:
+ 261 02a4 0000E0E3 		mvn	r0, #0
+ 262              	.L45:
+ 263 02a8 04409DE4 		ldmfd	sp!, {r4}
+ 264 02ac 1EFF2FE1 		bx	lr
+ 265              	.L51:
+ 266              		.align	2
+ 267              	.L50:
+ 268 02b0 0000D201 		.word	30539776
+ 270              		.align	2
+ 271              		.global	portG_read
+ 273              	portG_read:
+ 274              		@ Function supports interworking.
+ 275              		@ args = 0, pretend = 0, frame = 0
+ 276              		@ frame_needed = 0, uses_anonymous_args = 0
+ 277              		@ link register save eliminated.
+ 278 02b4 070050E3 		cmp	r0, #7
+ 279 02b8 04402DE5 		str	r4, [sp, #-4]!
+ 280 02bc 0C00008A 		bhi	.L56
+ 281 02c0 38309FE5 		ldr	r3, .L57
+ 282 02c4 402093E5 		ldr	r2, [r3, #64]
+ 283 02c8 80C0A0E1 		mov	ip, r0, asl #1
+ 284 02cc 0340A0E3 		mov	r4, #3
+ 285 02d0 14CC12E0 		ands	ip, r2, r4, asl ip
+ 286 02d4 0600001A 		bne	.L56
+ 287 02d8 442093E5 		ldr	r2, [r3, #68]
+ 288 02dc 0130A0E3 		mov	r3, #1
+ 289 02e0 130012E0 		ands	r0, r2, r3, asl r0
+ 290 02e4 0030C115 		strneb	r3, [r1, #0]
+ 291 02e8 0C00A011 		movne	r0, ip
+ 292 02ec 0000C105 		streqb	r0, [r1, #0]
+ 293 02f0 000000EA 		b	.L53
+ 294              	.L56:
+ 295 02f4 0000E0E3 		mvn	r0, #0
+ 296              	.L53:
+ 297 02f8 04409DE4 		ldmfd	sp!, {r4}
+ 298 02fc 1EFF2FE1 		bx	lr
+ 299              	.L58:
+ 300              		.align	2
+ 301              	.L57:
+ 302 0300 0000D201 		.word	30539776
+ 304              		.align	2
+ 305              		.global	portG_conf_pup
+ 307              	portG_conf_pup:
+ 308              		@ Function supports interworking.
+ 309              		@ args = 0, pretend = 0, frame = 0
+ 310              		@ frame_needed = 0, uses_anonymous_args = 0
+ 311              		@ link register save eliminated.
+ 312 0304 070050E3 		cmp	r0, #7
+ 313 0308 0000E083 		mvnhi	r0, #0
+ 314 030c 1EFF2F81 		bxhi	lr
+ 315 0310 010051E3 		cmp	r1, #1
+ 316 0314 0700008A 		bhi	.L63
+ 317 0318 20309FE5 		ldr	r3, .L65
+ 318 031c 482093E5 		ldr	r2, [r3, #72]
+ 319 0320 0110A013 		movne	r1, #1
+ 320 0324 1100C201 		biceq	r0, r2, r1, asl r0
+ 321 0328 11008211 		orrne	r0, r2, r1, asl r0
+ 322 032c 480083E5 		str	r0, [r3, #72]
+ 323 0330 0000A0E3 		mov	r0, #0
+ 324 0334 1EFF2FE1 		bx	lr
+ 325              	.L63:
+ 326 0338 0000E0E3 		mvn	r0, #0
+ 327 033c 1EFF2FE1 		bx	lr
+ 328              	.L66:
+ 329              		.align	2
+ 330              	.L65:
+ 331 0340 0000D201 		.word	30539776
+ 333              		.ident	"GCC: (Sourcery G++ Lite 2011.03-42) 4.5.2"
+DEFINED SYMBOLS
+                            *ABS*:00000000 gpio.c
+C:\Users\USUARI~1\AppData\Local\Temp\ccH7vFff.s:13     .text:00000000 $a
+C:\Users\USUARI~1\AppData\Local\Temp\ccH7vFff.s:16     .text:00000000 portB_conf
+C:\Users\USUARI~1\AppData\Local\Temp\ccH7vFff.s:46     .text:0000004c $d
+C:\Users\USUARI~1\AppData\Local\Temp\ccH7vFff.s:48     .text:00000050 $a
+C:\Users\USUARI~1\AppData\Local\Temp\ccH7vFff.s:51     .text:00000050 portB_write
+C:\Users\USUARI~1\AppData\Local\Temp\ccH7vFff.s:79     .text:0000009c $d
+C:\Users\USUARI~1\AppData\Local\Temp\ccH7vFff.s:81     .text:000000a0 $a
+C:\Users\USUARI~1\AppData\Local\Temp\ccH7vFff.s:84     .text:000000a0 portG_conf
+C:\Users\USUARI~1\AppData\Local\Temp\ccH7vFff.s:97     .text:000000bc $d
+C:\Users\USUARI~1\AppData\Local\Temp\ccH7vFff.s:102    .text:000000cc $a
+C:\Users\USUARI~1\AppData\Local\Temp\ccH7vFff.s:151    .text:00000168 $d
+C:\Users\USUARI~1\AppData\Local\Temp\ccH7vFff.s:153    .text:0000016c $a
+C:\Users\USUARI~1\AppData\Local\Temp\ccH7vFff.s:156    .text:0000016c portG_eint_trig
+C:\Users\USUARI~1\AppData\Local\Temp\ccH7vFff.s:169    .text:00000188 $d
+C:\Users\USUARI~1\AppData\Local\Temp\ccH7vFff.s:175    .text:0000019c $a
+C:\Users\USUARI~1\AppData\Local\Temp\ccH7vFff.s:227    .text:00000244 $d
+C:\Users\USUARI~1\AppData\Local\Temp\ccH7vFff.s:229    .text:00000248 $a
+C:\Users\USUARI~1\AppData\Local\Temp\ccH7vFff.s:232    .text:00000248 portG_write
+C:\Users\USUARI~1\AppData\Local\Temp\ccH7vFff.s:268    .text:000002b0 $d
+C:\Users\USUARI~1\AppData\Local\Temp\ccH7vFff.s:270    .text:000002b4 $a
+C:\Users\USUARI~1\AppData\Local\Temp\ccH7vFff.s:273    .text:000002b4 portG_read
+C:\Users\USUARI~1\AppData\Local\Temp\ccH7vFff.s:302    .text:00000300 $d
+C:\Users\USUARI~1\AppData\Local\Temp\ccH7vFff.s:304    .text:00000304 $a
+C:\Users\USUARI~1\AppData\Local\Temp\ccH7vFff.s:307    .text:00000304 portG_conf_pup
+C:\Users\USUARI~1\AppData\Local\Temp\ccH7vFff.s:331    .text:00000340 $d
+
+NO UNDEFINED SYMBOLS

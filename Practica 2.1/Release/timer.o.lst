@@ -1,0 +1,329 @@
+   1              		.cpu arm7tdmi
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 4
+  10              		.eabi_attribute 18, 4
+  11              		.file	"timer.c"
+  12              		.text
+  13              		.align	2
+  14              		.global	tmr_set_prescaler
+  16              	tmr_set_prescaler:
+  17              		@ Function supports interworking.
+  18              		@ args = 0, pretend = 0, frame = 0
+  19              		@ frame_needed = 0, uses_anonymous_args = 0
+  20              		@ link register save eliminated.
+  21 0000 010050E3 		cmp	r0, #1
+  22 0004 03005013 		cmpne	r0, #3
+  23 0008 0031A0E1 		mov	r3, r0, asl #2
+  24 000c 0100000A 		beq	.L2
+  25 0010 050050E3 		cmp	r0, #5
+  26 0014 0000001A 		bne	.L3
+  27              	.L2:
+  28 0018 043043E2 		sub	r3, r3, #4
+  29              	.L3:
+  30 001c 050050E3 		cmp	r0, #5
+  31 0020 18209F95 		ldrls	r2, .L6
+  32 0024 00009295 		ldrls	r0, [r2, #0]
+  33 0028 FF100192 		andls	r1, r1, #255
+  34 002c 11338091 		orrls	r3, r0, r1, asl r3
+  35 0030 0000E083 		mvnhi	r0, #0
+  36 0034 00308295 		strls	r3, [r2, #0]
+  37 0038 0000A093 		movls	r0, #0
+  38 003c 1EFF2FE1 		bx	lr
+  39              	.L7:
+  40              		.align	2
+  41              	.L6:
+  42 0040 0000D501 		.word	30736384
+  44              		.align	2
+  45              		.global	tmr_set_divider
+  47              	tmr_set_divider:
+  48              		@ Function supports interworking.
+  49              		@ args = 0, pretend = 0, frame = 0
+  50              		@ frame_needed = 0, uses_anonymous_args = 0
+  51              		@ link register save eliminated.
+  52 0044 050050E3 		cmp	r0, #5
+  53 0048 1E00008A 		bhi	.L13
+  54 004c 042041E2 		sub	r2, r1, #4
+  55 0050 003072E2 		rsbs	r3, r2, #0
+  56 0054 0230A3E0 		adc	r3, r3, r2
+  57 0058 030050E3 		cmp	r0, #3
+  58 005c 0030A0D3 		movle	r3, #0
+  59 0060 000053E3 		cmp	r3, #0
+  60 0064 1700001A 		bne	.L13
+  61 0068 05C041E2 		sub	ip, r1, #5
+  62 006c 00307CE2 		rsbs	r3, ip, #0
+  63 0070 0C30A3E0 		adc	r3, r3, ip
+  64 0074 050050E3 		cmp	r0, #5
+  65 0078 0030A003 		moveq	r3, #0
+  66 007c 000053E3 		cmp	r3, #0
+  67 0080 1000001A 		bne	.L13
+  68 0084 062041E2 		sub	r2, r1, #6
+  69 0088 003072E2 		rsbs	r3, r2, #0
+  70 008c 0230A3E0 		adc	r3, r3, r2
+  71 0090 040050E3 		cmp	r0, #4
+  72 0094 0030A003 		moveq	r3, #0
+  73 0098 000053E3 		cmp	r3, #0
+  74 009c 0B00001A 		bne	.L14
+  75 00a0 052041E2 		sub	r2, r1, #5
+  76 00a4 010052E3 		cmp	r2, #1
+  77 00a8 28209FE5 		ldr	r2, .L16
+  78 00ac 04C092E5 		ldr	ip, [r2, #4]
+  79 00b0 0001A0E1 		mov	r0, r0, asl #2
+  80 00b4 0410A093 		movls	r1, #4
+  81 00b8 11108CE1 		orr	r1, ip, r1, asl r0
+  82 00bc 0300A0E1 		mov	r0, r3
+  83 00c0 041082E5 		str	r1, [r2, #4]
+  84 00c4 1EFF2FE1 		bx	lr
+  85              	.L13:
+  86 00c8 0000E0E3 		mvn	r0, #0
+  87 00cc 1EFF2FE1 		bx	lr
+  88              	.L14:
+  89 00d0 0000E0E3 		mvn	r0, #0
+  90 00d4 1EFF2FE1 		bx	lr
+  91              	.L17:
+  92              		.align	2
+  93              	.L16:
+  94 00d8 0000D501 		.word	30736384
+  96              		.align	2
+  97              		.global	tmr_set_count
+  99              	tmr_set_count:
+ 100              		@ Function supports interworking.
+ 101              		@ args = 0, pretend = 0, frame = 0
+ 102              		@ frame_needed = 0, uses_anonymous_args = 0
+ 103              		@ link register save eliminated.
+ 104 00dc 050050E3 		cmp	r0, #5
+ 105 00e0 00F19F97 		ldrls	pc, [pc, r0, asl #2]
+ 106 00e4 1D0000EA 		b	.L27
+ 107              	.L26:
+ 108 00e8 00010000 		.word	.L20
+ 109 00ec 10010000 		.word	.L21
+ 110 00f0 20010000 		.word	.L22
+ 111 00f4 30010000 		.word	.L23
+ 112 00f8 40010000 		.word	.L24
+ 113 00fc 50010000 		.word	.L25
+ 114              	.L20:
+ 115 0100 60309FE5 		ldr	r3, .L29
+ 116 0104 0C1083E5 		str	r1, [r3, #12]
+ 117 0108 102083E5 		str	r2, [r3, #16]
+ 118 010c 110000EA 		b	.L28
+ 119              	.L21:
+ 120 0110 50309FE5 		ldr	r3, .L29
+ 121 0114 181083E5 		str	r1, [r3, #24]
+ 122 0118 1C2083E5 		str	r2, [r3, #28]
+ 123 011c 0D0000EA 		b	.L28
+ 124              	.L22:
+ 125 0120 40309FE5 		ldr	r3, .L29
+ 126 0124 241083E5 		str	r1, [r3, #36]
+ 127 0128 282083E5 		str	r2, [r3, #40]
+ 128 012c 090000EA 		b	.L28
+ 129              	.L23:
+ 130 0130 30309FE5 		ldr	r3, .L29
+ 131 0134 301083E5 		str	r1, [r3, #48]
+ 132 0138 342083E5 		str	r2, [r3, #52]
+ 133 013c 050000EA 		b	.L28
+ 134              	.L24:
+ 135 0140 20309FE5 		ldr	r3, .L29
+ 136 0144 3C1083E5 		str	r1, [r3, #60]
+ 137 0148 402083E5 		str	r2, [r3, #64]
+ 138 014c 010000EA 		b	.L28
+ 139              	.L25:
+ 140 0150 10309FE5 		ldr	r3, .L29
+ 141 0154 481083E5 		str	r1, [r3, #72]
+ 142              	.L28:
+ 143 0158 0000A0E3 		mov	r0, #0
+ 144 015c 1EFF2FE1 		bx	lr
+ 145              	.L27:
+ 146 0160 0000E0E3 		mvn	r0, #0
+ 147 0164 1EFF2FE1 		bx	lr
+ 148              	.L30:
+ 149              		.align	2
+ 150              	.L29:
+ 151 0168 0000D501 		.word	30736384
+ 153              		.align	2
+ 154              		.global	tmr_update
+ 156              	tmr_update:
+ 157              		@ Function supports interworking.
+ 158              		@ args = 0, pretend = 0, frame = 0
+ 159              		@ frame_needed = 0, uses_anonymous_args = 0
+ 160              		@ link register save eliminated.
+ 161 016c 000050E3 		cmp	r0, #0
+ 162 0170 0031A0E1 		mov	r3, r0, asl #2
+ 163 0174 0200000A 		beq	.L32
+ 164 0178 050050E3 		cmp	r0, #5
+ 165 017c 0800008A 		bhi	.L34
+ 166 0180 043083E2 		add	r3, r3, #4
+ 167              	.L32:
+ 168 0184 20209FE5 		ldr	r2, .L35
+ 169 0188 081092E5 		ldr	r1, [r2, #8]
+ 170 018c 0100A0E3 		mov	r0, #1
+ 171 0190 013083E2 		add	r3, r3, #1
+ 172 0194 103381E1 		orr	r3, r1, r0, asl r3
+ 173 0198 0000A0E3 		mov	r0, #0
+ 174 019c 083082E5 		str	r3, [r2, #8]
+ 175 01a0 1EFF2FE1 		bx	lr
+ 176              	.L34:
+ 177 01a4 0000E0E3 		mvn	r0, #0
+ 178 01a8 1EFF2FE1 		bx	lr
+ 179              	.L36:
+ 180              		.align	2
+ 181              	.L35:
+ 182 01ac 0000D501 		.word	30736384
+ 184              		.align	2
+ 185              		.global	tmr_set_mode
+ 187              	tmr_set_mode:
+ 188              		@ Function supports interworking.
+ 189              		@ args = 0, pretend = 0, frame = 0
+ 190              		@ frame_needed = 0, uses_anonymous_args = 0
+ 191              		@ link register save eliminated.
+ 192 01b0 000050E3 		cmp	r0, #0
+ 193 01b4 0031A0E1 		mov	r3, r0, asl #2
+ 194 01b8 0300000A 		beq	.L38
+ 195 01bc 050050E3 		cmp	r0, #5
+ 196 01c0 0000E083 		mvnhi	r0, #0
+ 197 01c4 1EFF2F81 		bxhi	lr
+ 198 01c8 043083E2 		add	r3, r3, #4
+ 199              	.L38:
+ 200 01cc 000051E3 		cmp	r1, #0
+ 201 01d0 0700001A 		bne	.L40
+ 202 01d4 3C209FE5 		ldr	r2, .L43
+ 203 01d8 080092E5 		ldr	r0, [r2, #8]
+ 204 01dc 033083E2 		add	r3, r3, #3
+ 205 01e0 01C0A0E3 		mov	ip, #1
+ 206 01e4 1C33C0E1 		bic	r3, r0, ip, asl r3
+ 207 01e8 0100A0E1 		mov	r0, r1
+ 208 01ec 083082E5 		str	r3, [r2, #8]
+ 209 01f0 1EFF2FE1 		bx	lr
+ 210              	.L40:
+ 211 01f4 010051E3 		cmp	r1, #1
+ 212 01f8 18209F05 		ldreq	r2, .L43
+ 213 01fc 08009205 		ldreq	r0, [r2, #8]
+ 214 0200 03308302 		addeq	r3, r3, #3
+ 215 0204 11138001 		orreq	r1, r0, r1, asl r3
+ 216 0208 0000E013 		mvnne	r0, #0
+ 217 020c 08108205 		streq	r1, [r2, #8]
+ 218 0210 0000A003 		moveq	r0, #0
+ 219 0214 1EFF2FE1 		bx	lr
+ 220              	.L44:
+ 221              		.align	2
+ 222              	.L43:
+ 223 0218 0000D501 		.word	30736384
+ 225              		.align	2
+ 226              		.global	tmr_start
+ 228              	tmr_start:
+ 229              		@ Function supports interworking.
+ 230              		@ args = 0, pretend = 0, frame = 0
+ 231              		@ frame_needed = 0, uses_anonymous_args = 0
+ 232              		@ link register save eliminated.
+ 233 021c 000050E3 		cmp	r0, #0
+ 234 0220 0031A0E1 		mov	r3, r0, asl #2
+ 235 0224 0200000A 		beq	.L46
+ 236 0228 050050E3 		cmp	r0, #5
+ 237 022c 0700008A 		bhi	.L48
+ 238 0230 043083E2 		add	r3, r3, #4
+ 239              	.L46:
+ 240 0234 1C209FE5 		ldr	r2, .L49
+ 241 0238 081092E5 		ldr	r1, [r2, #8]
+ 242 023c 0100A0E3 		mov	r0, #1
+ 243 0240 103381E1 		orr	r3, r1, r0, asl r3
+ 244 0244 0000A0E3 		mov	r0, #0
+ 245 0248 083082E5 		str	r3, [r2, #8]
+ 246 024c 1EFF2FE1 		bx	lr
+ 247              	.L48:
+ 248 0250 0000E0E3 		mvn	r0, #0
+ 249 0254 1EFF2FE1 		bx	lr
+ 250              	.L50:
+ 251              		.align	2
+ 252              	.L49:
+ 253 0258 0000D501 		.word	30736384
+ 255              		.align	2
+ 256              		.global	tmr_stop
+ 258              	tmr_stop:
+ 259              		@ Function supports interworking.
+ 260              		@ args = 0, pretend = 0, frame = 0
+ 261              		@ frame_needed = 0, uses_anonymous_args = 0
+ 262              		@ link register save eliminated.
+ 263 025c 000050E3 		cmp	r0, #0
+ 264 0260 0031A0E1 		mov	r3, r0, asl #2
+ 265 0264 0200000A 		beq	.L52
+ 266 0268 050050E3 		cmp	r0, #5
+ 267 026c 0700008A 		bhi	.L54
+ 268 0270 043083E2 		add	r3, r3, #4
+ 269              	.L52:
+ 270 0274 1C209FE5 		ldr	r2, .L55
+ 271 0278 081092E5 		ldr	r1, [r2, #8]
+ 272 027c 0100A0E3 		mov	r0, #1
+ 273 0280 1033C1E1 		bic	r3, r1, r0, asl r3
+ 274 0284 0000A0E3 		mov	r0, #0
+ 275 0288 083082E5 		str	r3, [r2, #8]
+ 276 028c 1EFF2FE1 		bx	lr
+ 277              	.L54:
+ 278 0290 0000E0E3 		mvn	r0, #0
+ 279 0294 1EFF2FE1 		bx	lr
+ 280              	.L56:
+ 281              		.align	2
+ 282              	.L55:
+ 283 0298 0000D501 		.word	30736384
+ 285              		.align	2
+ 286              		.global	tmr_isrunning
+ 288              	tmr_isrunning:
+ 289              		@ Function supports interworking.
+ 290              		@ args = 0, pretend = 0, frame = 0
+ 291              		@ frame_needed = 0, uses_anonymous_args = 0
+ 292              		@ link register save eliminated.
+ 293 029c 000050E3 		cmp	r0, #0
+ 294 02a0 0031A0E1 		mov	r3, r0, asl #2
+ 295 02a4 0200000A 		beq	.L58
+ 296 02a8 050050E3 		cmp	r0, #5
+ 297 02ac 0700008A 		bhi	.L60
+ 298 02b0 043083E2 		add	r3, r3, #4
+ 299              	.L58:
+ 300 02b4 1C209FE5 		ldr	r2, .L61
+ 301 02b8 082092E5 		ldr	r2, [r2, #8]
+ 302 02bc 0110A0E3 		mov	r1, #1
+ 303 02c0 111312E0 		ands	r1, r2, r1, asl r3
+ 304 02c4 0000A003 		moveq	r0, #0
+ 305 02c8 0100A013 		movne	r0, #1
+ 306 02cc 1EFF2FE1 		bx	lr
+ 307              	.L60:
+ 308 02d0 0000A0E3 		mov	r0, #0
+ 309 02d4 1EFF2FE1 		bx	lr
+ 310              	.L62:
+ 311              		.align	2
+ 312              	.L61:
+ 313 02d8 0000D501 		.word	30736384
+ 315              		.ident	"GCC: (Sourcery G++ Lite 2011.03-42) 4.5.2"
+DEFINED SYMBOLS
+                            *ABS*:00000000 timer.c
+C:\Users\USUARI~1\AppData\Local\Temp\cca6K5VC.s:13     .text:00000000 $a
+C:\Users\USUARI~1\AppData\Local\Temp\cca6K5VC.s:16     .text:00000000 tmr_set_prescaler
+C:\Users\USUARI~1\AppData\Local\Temp\cca6K5VC.s:42     .text:00000040 $d
+C:\Users\USUARI~1\AppData\Local\Temp\cca6K5VC.s:44     .text:00000044 $a
+C:\Users\USUARI~1\AppData\Local\Temp\cca6K5VC.s:47     .text:00000044 tmr_set_divider
+C:\Users\USUARI~1\AppData\Local\Temp\cca6K5VC.s:94     .text:000000d8 $d
+C:\Users\USUARI~1\AppData\Local\Temp\cca6K5VC.s:96     .text:000000dc $a
+C:\Users\USUARI~1\AppData\Local\Temp\cca6K5VC.s:99     .text:000000dc tmr_set_count
+C:\Users\USUARI~1\AppData\Local\Temp\cca6K5VC.s:108    .text:000000e8 $d
+C:\Users\USUARI~1\AppData\Local\Temp\cca6K5VC.s:115    .text:00000100 $a
+C:\Users\USUARI~1\AppData\Local\Temp\cca6K5VC.s:151    .text:00000168 $d
+C:\Users\USUARI~1\AppData\Local\Temp\cca6K5VC.s:153    .text:0000016c $a
+C:\Users\USUARI~1\AppData\Local\Temp\cca6K5VC.s:156    .text:0000016c tmr_update
+C:\Users\USUARI~1\AppData\Local\Temp\cca6K5VC.s:182    .text:000001ac $d
+C:\Users\USUARI~1\AppData\Local\Temp\cca6K5VC.s:184    .text:000001b0 $a
+C:\Users\USUARI~1\AppData\Local\Temp\cca6K5VC.s:187    .text:000001b0 tmr_set_mode
+C:\Users\USUARI~1\AppData\Local\Temp\cca6K5VC.s:223    .text:00000218 $d
+C:\Users\USUARI~1\AppData\Local\Temp\cca6K5VC.s:225    .text:0000021c $a
+C:\Users\USUARI~1\AppData\Local\Temp\cca6K5VC.s:228    .text:0000021c tmr_start
+C:\Users\USUARI~1\AppData\Local\Temp\cca6K5VC.s:253    .text:00000258 $d
+C:\Users\USUARI~1\AppData\Local\Temp\cca6K5VC.s:255    .text:0000025c $a
+C:\Users\USUARI~1\AppData\Local\Temp\cca6K5VC.s:258    .text:0000025c tmr_stop
+C:\Users\USUARI~1\AppData\Local\Temp\cca6K5VC.s:283    .text:00000298 $d
+C:\Users\USUARI~1\AppData\Local\Temp\cca6K5VC.s:285    .text:0000029c $a
+C:\Users\USUARI~1\AppData\Local\Temp\cca6K5VC.s:288    .text:0000029c tmr_isrunning
+C:\Users\USUARI~1\AppData\Local\Temp\cca6K5VC.s:313    .text:000002d8 $d
+
+NO UNDEFINED SYMBOLS

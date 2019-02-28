@@ -1,0 +1,233 @@
+   1              		.cpu arm7tdmi
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 4
+  10              		.eabi_attribute 18, 4
+  11              		.file	"main.c"
+  12              		.text
+  13              		.align	2
+  14              		.global	timer_ISR
+  16              	timer_ISR:
+  17              		@ Function supports interworking.
+  18              		@ args = 0, pretend = 0, frame = 0
+  19              		@ frame_needed = 1, uses_anonymous_args = 0
+  20 0000 50309FE5 		ldr	r3, .L7
+  21 0004 082093E5 		ldr	r2, [r3, #8]
+  22 0008 0DC0A0E1 		mov	ip, sp
+  23 000c 010052E3 		cmp	r2, #1
+  24 0010 00D82DE9 		stmfd	sp!, {fp, ip, lr, pc}
+  25 0014 04B04CE2 		sub	fp, ip, #4
+  26 0018 0400001A 		bne	.L2
+  27 001c 0C2093E5 		ldr	r2, [r3, #12]
+  28 0020 050052E3 		cmp	r2, #5
+  29 0024 0020A003 		moveq	r2, #0
+  30 0028 01208212 		addne	r2, r2, #1
+  31 002c 030000EA 		b	.L6
+  32              	.L2:
+  33 0030 0C2093E5 		ldr	r2, [r3, #12]
+  34 0034 000052E3 		cmp	r2, #0
+  35 0038 05208202 		addeq	r2, r2, #5
+  36 003c 01204212 		subne	r2, r2, #1
+  37              	.L6:
+  38 0040 0C2083E5 		str	r2, [r3, #12]
+  39 0044 0C0093E5 		ldr	r0, [r3, #12]
+  40 0048 FEFFFFEB 		bl	D8Led_segment
+  41 004c 0CD04BE2 		sub	sp, fp, #12
+  42 0050 00689DE8 		ldmfd	sp, {fp, sp, lr}
+  43 0054 1EFF2FE1 		bx	lr
+  44              	.L8:
+  45              		.align	2
+  46              	.L7:
+  47 0058 00000000 		.word	.LANCHOR0
+  49              		.align	2
+  50              		.global	button_ISR
+  52              	button_ISR:
+  53              		@ Function supports interworking.
+  54              		@ args = 0, pretend = 0, frame = 0
+  55              		@ frame_needed = 1, uses_anonymous_args = 0
+  56 005c 0DC0A0E1 		mov	ip, sp
+  57 0060 18D82DE9 		stmfd	sp!, {r3, r4, fp, ip, lr, pc}
+  58 0064 84309FE5 		ldr	r3, .L14
+  59 0068 544093E5 		ldr	r4, [r3, #84]
+  60 006c 2441A0E1 		mov	r4, r4, lsr #2
+  61 0070 034004E2 		and	r4, r4, #3
+  62 0074 010054E3 		cmp	r4, #1
+  63 0078 04B04CE2 		sub	fp, ip, #4
+  64 007c 70309F05 		ldreq	r3, .L14+4
+  65 0080 08209305 		ldreq	r2, [r3, #8]
+  66 0084 0220E001 		mvneq	r2, r2
+  67 0088 08208305 		streq	r2, [r3, #8]
+  68 008c 0D00000A 		beq	.L11
+  69              	.L10:
+  70 0090 020054E3 		cmp	r4, #2
+  71 0094 0B00001A 		bne	.L11
+  72 0098 0000A0E3 		mov	r0, #0
+  73 009c FEFFFFEB 		bl	tmr_isrunning
+  74 00a0 000050E3 		cmp	r0, #0
+  75 00a4 0200000A 		beq	.L12
+  76 00a8 0000A0E3 		mov	r0, #0
+  77 00ac FEFFFFEB 		bl	tmr_stop
+  78 00b0 000000EA 		b	.L13
+  79              	.L12:
+  80 00b4 FEFFFFEB 		bl	tmr_start
+  81              	.L13:
+  82 00b8 34309FE5 		ldr	r3, .L14+4
+  83 00bc 002093E5 		ldr	r2, [r3, #0]
+  84 00c0 0220E0E1 		mvn	r2, r2
+  85 00c4 002083E5 		str	r2, [r3, #0]
+  86              	.L11:
+  87 00c8 7D0EA0E3 		mov	r0, #2000
+  88 00cc FEFFFFEB 		bl	Delay
+  89 00d0 18309FE5 		ldr	r3, .L14
+  90 00d4 542093E5 		ldr	r2, [r3, #84]
+  91 00d8 0110A0E3 		mov	r1, #1
+  92 00dc 1144C2E1 		bic	r4, r2, r1, asl r4
+  93 00e0 544083E5 		str	r4, [r3, #84]
+  94 00e4 14D04BE2 		sub	sp, fp, #20
+  95 00e8 18689DE8 		ldmfd	sp, {r3, r4, fp, sp, lr}
+  96 00ec 1EFF2FE1 		bx	lr
+  97              	.L15:
+  98              		.align	2
+  99              	.L14:
+ 100 00f0 0000D201 		.word	30539776
+ 101 00f4 00000000 		.word	.LANCHOR0
+ 103              		.align	2
+ 104              		.global	setup
+ 106              	setup:
+ 107              		@ Function supports interworking.
+ 108              		@ args = 0, pretend = 0, frame = 0
+ 109              		@ frame_needed = 1, uses_anonymous_args = 0
+ 110 00f8 0DC0A0E1 		mov	ip, sp
+ 111 00fc 18D82DE9 		stmfd	sp!, {r3, r4, fp, ip, lr, pc}
+ 112 0100 04419FE5 		ldr	r4, .L18
+ 113 0104 04B04CE2 		sub	fp, ip, #4
+ 114 0108 FEFFFFEB 		bl	leds_init
+ 115 010c FEFFFFEB 		bl	D8Led_init
+ 116 0110 0C0094E5 		ldr	r0, [r4, #12]
+ 117 0114 FEFFFFEB 		bl	D8Led_segment
+ 118 0118 0310A0E3 		mov	r1, #3
+ 119 011c 0600A0E3 		mov	r0, #6
+ 120 0120 FEFFFFEB 		bl	portG_conf
+ 121 0124 0310A0E3 		mov	r1, #3
+ 122 0128 0700A0E3 		mov	r0, #7
+ 123 012c FEFFFFEB 		bl	portG_conf
+ 124 0130 0210A0E3 		mov	r1, #2
+ 125 0134 0600A0E3 		mov	r0, #6
+ 126 0138 FEFFFFEB 		bl	portG_eint_trig
+ 127 013c 0210A0E3 		mov	r1, #2
+ 128 0140 0700A0E3 		mov	r0, #7
+ 129 0144 FEFFFFEB 		bl	portG_eint_trig
+ 130 0148 0110A0E3 		mov	r1, #1
+ 131 014c 0600A0E3 		mov	r0, #6
+ 132 0150 FEFFFFEB 		bl	portG_conf_pup
+ 133 0154 0110A0E3 		mov	r1, #1
+ 134 0158 0700A0E3 		mov	r0, #7
+ 135 015c FEFFFFEB 		bl	portG_conf_pup
+ 136 0160 FF10A0E3 		mov	r1, #255
+ 137 0164 0000A0E3 		mov	r0, #0
+ 138 0168 FEFFFFEB 		bl	tmr_set_prescaler
+ 139 016c 0210A0E3 		mov	r1, #2
+ 140 0170 0000A0E3 		mov	r0, #0
+ 141 0174 FEFFFFEB 		bl	tmr_set_divider
+ 142 0178 0120A0E3 		mov	r2, #1
+ 143 017c 8C109FE5 		ldr	r1, .L18+4
+ 144 0180 0000A0E3 		mov	r0, #0
+ 145 0184 FEFFFFEB 		bl	tmr_set_count
+ 146 0188 0000A0E3 		mov	r0, #0
+ 147 018c FEFFFFEB 		bl	tmr_update
+ 148 0190 0110A0E3 		mov	r1, #1
+ 149 0194 0000A0E3 		mov	r0, #0
+ 150 0198 FEFFFFEB 		bl	tmr_set_mode
+ 151 019c 0000A0E3 		mov	r0, #0
+ 152 01a0 FEFFFFEB 		bl	tmr_stop
+ 153 01a4 003094E5 		ldr	r3, [r4, #0]
+ 154 01a8 000053E3 		cmp	r3, #0
+ 155 01ac 0000A013 		movne	r0, #0
+ 156 01b0 FEFFFF1B 		blne	tmr_start
+ 157              	.L17:
+ 158 01b4 FEFFFFEB 		bl	ic_init
+ 159 01b8 0100A0E3 		mov	r0, #1
+ 160 01bc 0010A0E1 		mov	r1, r0
+ 161 01c0 FEFFFFEB 		bl	ic_conf_irq
+ 162 01c4 0000A0E3 		mov	r0, #0
+ 163 01c8 FEFFFFEB 		bl	ic_conf_fiq
+ 164 01cc 0010A0E3 		mov	r1, #0
+ 165 01d0 0D00A0E3 		mov	r0, #13
+ 166 01d4 FEFFFFEB 		bl	ic_conf_line
+ 167 01d8 0010A0E3 		mov	r1, #0
+ 168 01dc 1500A0E3 		mov	r0, #21
+ 169 01e0 FEFFFFEB 		bl	ic_conf_line
+ 170 01e4 0D00A0E3 		mov	r0, #13
+ 171 01e8 FEFFFFEB 		bl	ic_enable
+ 172 01ec 1500A0E3 		mov	r0, #21
+ 173 01f0 FEFFFFEB 		bl	ic_enable
+ 174 01f4 0000A0E3 		mov	r0, #0
+ 175 01f8 FEFFFFEB 		bl	Delay
+ 176 01fc 0000A0E3 		mov	r0, #0
+ 177 0200 14D04BE2 		sub	sp, fp, #20
+ 178 0204 18689DE8 		ldmfd	sp, {r3, r4, fp, sp, lr}
+ 179 0208 1EFF2FE1 		bx	lr
+ 180              	.L19:
+ 181              		.align	2
+ 182              	.L18:
+ 183 020c 00000000 		.word	.LANCHOR0
+ 184 0210 24F40000 		.word	62500
+ 186              		.align	2
+ 187              		.global	main
+ 189              	main:
+ 190              		@ Function supports interworking.
+ 191              		@ args = 0, pretend = 0, frame = 0
+ 192              		@ frame_needed = 0, uses_anonymous_args = 0
+ 193              		@ link register save eliminated.
+ 194 0214 FEFFFFEA 		b	setup
+ 196              		.data
+ 197              		.align	2
+ 198              		.set	.LANCHOR0,. + 0
+ 201              	RL:
+ 202 0000 00000000 		.word	0
+ 203 0004 05000000 		.word	5
+ 204 0008 00000000 		.word	0
+ 205 000c 00000000 		.word	0
+ 206              		.ident	"GCC: (Sourcery G++ Lite 2011.03-42) 4.5.2"
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+C:\Users\USUARI~1\AppData\Local\Temp\cc8CHUOv.s:13     .text:00000000 $a
+C:\Users\USUARI~1\AppData\Local\Temp\cc8CHUOv.s:16     .text:00000000 timer_ISR
+C:\Users\USUARI~1\AppData\Local\Temp\cc8CHUOv.s:47     .text:00000058 $d
+C:\Users\USUARI~1\AppData\Local\Temp\cc8CHUOv.s:49     .text:0000005c $a
+C:\Users\USUARI~1\AppData\Local\Temp\cc8CHUOv.s:52     .text:0000005c button_ISR
+C:\Users\USUARI~1\AppData\Local\Temp\cc8CHUOv.s:100    .text:000000f0 $d
+C:\Users\USUARI~1\AppData\Local\Temp\cc8CHUOv.s:103    .text:000000f8 $a
+C:\Users\USUARI~1\AppData\Local\Temp\cc8CHUOv.s:106    .text:000000f8 setup
+C:\Users\USUARI~1\AppData\Local\Temp\cc8CHUOv.s:183    .text:0000020c $d
+C:\Users\USUARI~1\AppData\Local\Temp\cc8CHUOv.s:186    .text:00000214 $a
+C:\Users\USUARI~1\AppData\Local\Temp\cc8CHUOv.s:189    .text:00000214 main
+C:\Users\USUARI~1\AppData\Local\Temp\cc8CHUOv.s:197    .data:00000000 $d
+C:\Users\USUARI~1\AppData\Local\Temp\cc8CHUOv.s:201    .data:00000000 RL
+
+UNDEFINED SYMBOLS
+D8Led_segment
+tmr_isrunning
+tmr_stop
+tmr_start
+Delay
+leds_init
+D8Led_init
+portG_conf
+portG_eint_trig
+portG_conf_pup
+tmr_set_prescaler
+tmr_set_divider
+tmr_set_count
+tmr_update
+tmr_set_mode
+ic_init
+ic_conf_irq
+ic_conf_fiq
+ic_conf_line
+ic_enable

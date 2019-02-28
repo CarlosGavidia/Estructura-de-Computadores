@@ -1,0 +1,237 @@
+   1              	# 1 "../init.asm"
+   1              	/*-----------------------------------------------------------------
+   0              	
+   0              	
+   2              	**
+   3              	**  Fichero:
+   4              	**    init.asm  10/6/2014
+   5              	**
+   6              	**    Estructura de Computadores
+   7              	**    Dpto. de Arquitectura de Computadores y Automática
+   8              	**    Facultad de Informática. Universidad Complutense de Madrid
+   9              	**
+  10              	**  Propósito:
+  11              	**    Arranca un programa en C
+  12              	**
+  13              	**  Notas de diseño:
+  14              	**
+  15              	**---------------------------------------------------------------*/
+  16              	
+  17              	    .extern main
+  18              		.global start
+  19              		.extern button_ISR
+  20              		.extern timer_ISR
+  21              		.extern ic_cleanflag
+  22              		
+  23              		/* Tabla en la que escribir las direcciones de las ISRs */
+  24              		.equ _ISR_STARTADDRESS, 0xc7fff00
+  25              		.equ HandleIRQ, _ISR_STARTADDRESS+4*6
+  26              	
+  27              		/* Constantes utiles para la rutina ISR_FIQ */
+  28              		.equ I_ISPR, 0x01E00020
+  29              		.equ I_ISPC, 0x01E00024
+  30              	
+  31              		/*
+  32              		** Modos de operación
+  33              		*/
+  34              		.equ MODEMASK, 0x1f		/* Para selección de M[4:0] del CPSR */
+  35              		.equ USRMODE,  0x10
+  36              		.equ FIQMODE,  0x11
+  37              		.equ IRQMODE,  0x12
+  38              		.equ SVCMODE,  0x13
+  39              		.equ ABTMODE,  0x17
+  40              		.equ UNDMODE,  0x1b
+  41              		.equ SYSMODE,  0x1f
+  42              	
+  43              		/*
+  44              		** Direcciones de las bases de las pilas del sistema 
+  45              		*/
+  46              		.equ USRSTACK, 0xc7ff000   	
+  47              		.equ SVCSTACK, 0xc7ff100
+  48              		.equ UNDSTACK, 0xc7ff200
+  49              		.equ ABTSTACK, 0xc7ff300
+  50              		.equ IRQSTACK, 0xc7ff400
+  51              		.equ FIQSTACK, 0xc7ff500
+  52              	
+  53              		/*
+  54              		** Registro de máscara de interrupción
+  55              		*/
+  56              		.equ rINTMSK,    0x1e0000c
+  57              		.equ rI_ISPC,    0x1e00024
+  58              		.equ rF_ISPC,    0x1e0003c
+  59              		.equ rEXTINTPND, 0x1d20054
+  60              	
+  61              	start:
+  62              	
+  63              		/* Pasa a modo supervisor */
+  64 0000 00000FE1 	    mrs	r0, cpsr
+  65 0004 1F00C0E3 	    bic	r0, r0, #MODEMASK
+  66 0008 131080E3 	    orr	r1, r0, #SVCMODE
+  67 000c 01F021E1 	    msr	cpsr_c, r1 
+  68              	
+  69              		/* Inicialización de la sección bss a 0, estándar C */
+  70 0010 2C319FE5 	    ldr	    r3, =Image_ZI_Base
+  71 0014 2C119FE5 		ldr	    r1, =Image_ZI_Limit	/* Top of zero init segment */
+  72 0018 0020A0E3 	    mov	    r2, #0
+  73              	L0:
+  74 001c 010053E1 	    cmp	    r3, r1	    		/* Zero init */
+  75 0020 04208334 	    strcc   r2, [r3], #4
+  76 0024 FCFFFF3A 	    bcc	    L0
+  77              		/****************************************************/
+  78              	
+  79              		/* Desde modo SVC inicializa los SP de todos los modos de ejecución privilegiados */
+  80 0028 190000EB 	    bl InitStacks
+  81              	
+  82 002c 18019FE5 		ldr r0, =rEXTINTPND
+  83 0030 FF10A0E3 		ldr r1, =0xff
+  84 0034 001080E5 		str r1, [r0]
+  85 0038 10019FE5 		ldr r0, =rI_ISPC
+  86 003c 0E12E0E3 		ldr r1, =0x1fffffff
+  87 0040 001080E5 		str r1, [r0]
+  88 0044 08019FE5 		ldr r0, =rF_ISPC
+  89 0048 0E12E0E3 		ldr r1, =0x1fffffff
+  90 004c 001080E5 		str r1, [r0]
+  91              	
+  92              		/* Enmascara interrupciones */
+  93 0050 00019FE5 		ldr r0, =rINTMSK
+  94 0054 0E12E0E3 		ldr r1, =0x1fffffff
+  95 0058 001080E5 	    str r1, [r0]
+  96              	
+  97              		/* Habilita línea IRQ y FIQ del CPSR */
+  98 005c 00000FE1 		mrs r0, cpsr
+  99 0060 C000C0E3 		bic r0, r0, #0xC0
+ 100 0064 00F021E1 		msr cpsr_c, r0
+ 101              		
+ 102              		/* Añade dirección irq_ISR en la tabla de direcciones a RTIs*/
+ 103 0068 EC009FE5 		ldr r0,=irq_ISR
+ 104 006c EC109FE5 		ldr r1,=HandleIRQ
+ 105 0070 000081E5 		str r0,[r1]
+ 106              	
+ 107              		/* Desde modo SVC cambia a modo USR e inicializa el SP_usr */
+ 108 0074 00000FE1 		mrs r0, cpsr
+ 109 0078 1F00C0E3 		bic r0, r0, #MODEMASK
+ 110 007c 101080E3 		orr r1, r0, #USRMODE  
+ 111 0080 01F021E1 		msr cpsr_c, r1
+ 112 0084 D8D09FE5 		ldr sp, =USRSTACK
+ 113              	
+ 114 0088 00B0A0E3 	    mov fp, #0
+ 115              	
+ 116 008c FEFFFFEB 	    bl main
+ 117              	
+ 118              	End:
+ 119 0090 FEFFFFEA 	    B End
+ 120              	
+ 121              	InitStacks:
+ 122 0094 00000FE1 		mrs r0, cpsr
+ 123 0098 1F00C0E3 		bic r0, r0, #MODEMASK
+ 124              	
+ 125 009c 1B1080E3 		orr r1, r0, #UNDMODE  /* desde modo SVC cambia a modo UND e inicializa el SP_und */
+ 126 00a0 01F021E1 		msr cpsr_c, r1    
+ 127 00a4 BCD09FE5 		ldr sp, =UNDSTACK
+ 128              	
+ 129 00a8 171080E3 		orr r1, r0, #ABTMODE  /* desde modo UND cambia a modo ABT e inicializa el SP_abt */
+ 130 00ac 01F021E1 		msr cpsr_c, r1 
+ 131 00b0 B4D09FE5 		ldr sp, =ABTSTACK
+ 132              	
+ 133 00b4 121080E3 		orr r1, r0, #IRQMODE  /* desde modo ABT cambia a modo IRQ e inicializa el SP_abt */
+ 134 00b8 01F021E1 		msr cpsr_c, r1
+ 135 00bc ACD09FE5 		ldr sp, =IRQSTACK
+ 136              	
+ 137 00c0 111080E3 		orr r1, r0, #FIQMODE  /* desde modo IRQ cambia a modo FIQ e inicializa el SP_fiq */
+ 138 00c4 01F021E1 		msr cpsr_c, r1
+ 139 00c8 A4D09FE5 		ldr sp, =FIQSTACK
+ 140              	
+ 141 00cc 131080E3 		orr r1, r0, #SVCMODE  /* desde modo FIQ cambia a modo SVC e inicializa el SP_svc */
+ 142 00d0 01F021E1 		msr cpsr_c, r1
+ 143 00d4 9CD09FE5 		ldr sp, =SVCSTACK
+ 144              		
+ 145 00d8 0EF0A0E1 	    mov pc, lr
+ 146              	
+ 147              	//irq_ISR:
+ 148              		//COMPLETAR: debemos ver si la interrupción que debemos atender (bit) es la
+ 149              		//de la línea INT_TIMER0 and INT_EINT4567. Si es la del timer se invocará la
+ 150              		//función timer_ISR y después se borrará el flag de interrupción utilizando
+ 151              		//el interfaz definido en intcontroller.h. Si es la de EINT4567 se invocará
+ 152              		//la función button_ISR y se borrará el flag correspondiente utilizando el
+ 153              		//mismo interfaz.
+ 154              		//Recordad que en el prólogo hay que guardar todos los registros usados+lr si es no hoja*/
+ 155              		//Antes de la llamada a otra función hay que guardar los registros de R0 a R3
+ 156              	
+ 157              	
+ 158              	
+ 159              		// tengo que comprobar que si el timer o el pulsador  han interrumpido. se mira en el registro
+ 160              		// ISPR.Si el bit que codifica la linea de interrupvione sta a 1,hay una peticion. Vamos a la
+ 161              		//subrutina que trata esa inerrupcion, y luego borramos los flags.
+ 162              	
+ 163              	irq_ISR:
+ 164 00dc F0412DE9 			PUSH {R4,R5,R6,R7,R8,LR}
+ 165 00e0 0040A0E3 			MOV R4,#0			     	@R4=21 es el contador para comparar con el pulsador(r6)
+ 166 00e4 90709FE5 			LDR R7,=I_ISPR
+ 167 00e8 007097E5 			LDR R7,[R7]
+ 168 00ec 025607E2 		    AND R5,R7,#0X00200000;	@MSK para el pulsador
+ 169 00f0 026A07E2 		    AND R6,R7,#0X00002000;	@MSK para el timer
+ 170 00f4 040055E1 		    CMP R5,R4					@PRIMER IF PARA EL PULSADOR
+ 171 00f8 0600000A 			BEQ else1					@salta si son iguales
+ 172 00fc 0F002DE9 			PUSH {R0,R1,R2,R3}
+ 173 0100 FEFFFFEB 			BL button_ISR				@Slata a la subturina button
+ 174 0104 0F00BDE8 			POP {R0,R1,R2,R3}
+ 175 0108 0F002DE9 			PUSH {R0,R1,R2,R3}
+ 176 010c 1500A0E3 			MOV R0,#21					@pasar param a la subrutina ic_cleanflag
+ 177 0110 FEFFFFEB 			BL ic_cleanflag				@limpiar los flags de button
+ 178 0114 0F00BDE8 			POP {R0,R1,R2,R3}
+ 179 0118 060054E1 			else1:CMP R4, R6
+ 180 011c 0600000A 				 BEQ else2               @salta sin son iguales
+ 181 0120 0F002DE9 			     PUSH {R0,R1,R2,R3}
+ 182 0124 FEFFFFEB 			  	 BL timer_ISR			@Salta a la subturina button
+ 183 0128 0F00BDE8 			     POP {R0,R1,R2,R3}
+ 184 012c 0F002DE9 				 PUSH {R0,R1,R2,R3}
+ 185 0130 0D00A0E3 				 MOV R0,#13				@pasar param a la subrutina ic_cleanflag
+ 186 0134 FEFFFFEB 				 BL ic_cleanflag		@limpiar los flags de button
+ 187 0138 0F00BDE8 				 POP {R0,R1,R2,R3}
+ 188 013c F041BDE8 				else2:	 POP {R4,R5,R6,R7, R8, LR}		@Restauramos
+ 189 0140 0EF0A0E1 				         MOV PC, LR					@Volvemos al programa principal
+ 190 0144 00000000 		.end
+ 190      00000000 
+ 190      5400D201 
+ 190      2400E001 
+ 190      3C00E001 
+DEFINED SYMBOLS
+         ../init.asm:61     .text:00000000 start
+         ../init.asm:24     *ABS*:0c7fff00 _ISR_STARTADDRESS
+         ../init.asm:25     *ABS*:0c7fff18 HandleIRQ
+         ../init.asm:28     *ABS*:01e00020 I_ISPR
+         ../init.asm:29     *ABS*:01e00024 I_ISPC
+         ../init.asm:34     *ABS*:0000001f MODEMASK
+         ../init.asm:35     *ABS*:00000010 USRMODE
+         ../init.asm:36     *ABS*:00000011 FIQMODE
+         ../init.asm:37     *ABS*:00000012 IRQMODE
+         ../init.asm:38     *ABS*:00000013 SVCMODE
+         ../init.asm:39     *ABS*:00000017 ABTMODE
+         ../init.asm:40     *ABS*:0000001b UNDMODE
+         ../init.asm:41     *ABS*:0000001f SYSMODE
+         ../init.asm:46     *ABS*:0c7ff000 USRSTACK
+         ../init.asm:47     *ABS*:0c7ff100 SVCSTACK
+         ../init.asm:48     *ABS*:0c7ff200 UNDSTACK
+         ../init.asm:49     *ABS*:0c7ff300 ABTSTACK
+         ../init.asm:50     *ABS*:0c7ff400 IRQSTACK
+         ../init.asm:51     *ABS*:0c7ff500 FIQSTACK
+         ../init.asm:56     *ABS*:01e0000c rINTMSK
+         ../init.asm:57     *ABS*:01e00024 rI_ISPC
+         ../init.asm:58     *ABS*:01e0003c rF_ISPC
+         ../init.asm:59     *ABS*:01d20054 rEXTINTPND
+         ../init.asm:64     .text:00000000 $a
+         ../init.asm:73     .text:0000001c L0
+         ../init.asm:121    .text:00000094 InitStacks
+         ../init.asm:163    .text:000000dc irq_ISR
+         ../init.asm:118    .text:00000090 End
+         ../init.asm:179    .text:00000118 else1
+         ../init.asm:188    .text:0000013c else2
+         ../init.asm:190    .text:00000144 $d
+
+UNDEFINED SYMBOLS
+Image_ZI_Base
+Image_ZI_Limit
+main
+button_ISR
+ic_cleanflag
+timer_ISR
