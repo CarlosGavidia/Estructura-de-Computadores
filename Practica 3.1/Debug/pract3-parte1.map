@@ -1,0 +1,336 @@
+Archive member included because of file (symbol)
+
+c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_divsi3.o)
+                              ./utils.o (__aeabi_idiv)
+c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_dvmd_tls.o)
+                              c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_divsi3.o) (__aeabi_idiv0)
+
+Allocating common symbols
+Common symbol       size              file
+
+gstate              0x1               ./main.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD ./D8Led.o
+LOAD ./gpio.o
+LOAD ./init.o
+LOAD ./intcontroller.o
+LOAD ./keyboard.o
+LOAD ./leds.o
+LOAD ./main.o
+LOAD ./timer.o
+LOAD ./utils.o
+START GROUP
+LOAD c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a
+LOAD c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/lib\libc.a
+END GROUP
+                0x0c100000                . = 0xc100000
+
+.data           0x0c100000       0xb8
+ *(.data*)
+ .data          0x0c100000       0x60 ./D8Led.o
+ .data          0x0c100060        0x0 ./gpio.o
+ .data          0x0c100060        0x0 ./init.o
+ .data          0x0c100060        0x0 ./intcontroller.o
+ .data          0x0c100060        0x4 ./keyboard.o
+ .data          0x0c100064        0x0 ./leds.o
+ .data          0x0c100064        0x0 ./main.o
+ .data          0x0c100064        0x0 ./timer.o
+ .data          0x0c100064        0x4 ./utils.o
+ .data          0x0c100068        0x0 c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_divsi3.o)
+ .data          0x0c100068        0x0 c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_dvmd_tls.o)
+ *(.rodata*)
+ .rodata        0x0c100068       0x50 ./keyboard.o
+                0x0c1000b8                Image_ZI_Base = .
+
+.bss            0x0c1000b8       0x21
+ *(.bss*)
+ .bss           0x0c1000b8        0x0 ./D8Led.o
+ .bss           0x0c1000b8        0x0 ./gpio.o
+ .bss           0x0c1000b8        0x0 ./init.o
+ .bss           0x0c1000b8        0x0 ./intcontroller.o
+ .bss           0x0c1000b8        0x0 ./keyboard.o
+ .bss           0x0c1000b8        0x4 ./leds.o
+ .bss           0x0c1000bc       0x1c ./main.o
+ .bss           0x0c1000d8        0x0 ./timer.o
+ .bss           0x0c1000d8        0x0 ./utils.o
+ .bss           0x0c1000d8        0x0 c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_divsi3.o)
+ .bss           0x0c1000d8        0x0 c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_dvmd_tls.o)
+ *(COMMON)
+ COMMON         0x0c1000d8        0x1 ./main.o
+                0x0c1000d8                gstate
+                0x0c1000d9                Image_ZI_Limit = .
+
+.text           0x0c1000dc     0x213c
+ *(.text*)
+ .text          0x0c1000dc       0xdc ./D8Led.o
+                0x0c1000dc                D8Led_init
+                0x0c100100                D8Led_segment
+                0x0c10015c                D8Led_digit
+ .text          0x0c1001b8      0x748 ./gpio.o
+                0x0c1001b8                portB_conf
+                0x0c100280                portB_write
+                0x0c10033c                portG_conf
+                0x0c1004a0                portG_eint_trig
+                0x0c100674                portG_write
+                0x0c100774                portG_read
+                0x0c100838                portG_conf_pup
+ .text          0x0c100900      0x100 ./init.o
+                0x0c100900                start
+ .text          0x0c100a00      0x408 ./intcontroller.o
+                0x0c100a00                ic_init
+                0x0c100a44                ic_conf_irq
+                0x0c100b1c                ic_conf_fiq
+                0x0c100ba0                ic_conf_line
+                0x0c100c70                ic_enable
+                0x0c100cec                ic_disable
+                0x0c100d50                ic_cleanflag
+ .text          0x0c100e08      0x1b0 ./keyboard.o
+                0x0c100e08                kb_scan
+ .text          0x0c100fb8      0x298 ./leds.o
+                0x0c100fb8                leds_init
+                0x0c100ffc                led1_on
+                0x0c10103c                led1_off
+                0x0c10107c                led2_on
+                0x0c1010bc                led2_off
+                0x0c1010fc                led1_switch
+                0x0c10113c                led2_switch
+                0x0c10117c                leds_switch
+                0x0c1011bc                leds_display
+ .text          0x0c101250      0x6dc ./main.o
+                0x0c1012d0                timer_ISR
+                0x0c1013b8                printD8Led
+                0x0c101420                keyboard_ISR
+                0x0c101500                read_kbd
+                0x0c101680                setup
+                0x0c101794                loop
+                0x0c101914                main
+ .text          0x0c10192c      0x668 ./timer.o
+                0x0c10192c                tmr_set_prescaler
+                0x0c101a08                tmr_set_divider
+                0x0c101b1c                tmr_set_count
+                0x0c101c50                tmr_update
+                0x0c101d04                tmr_set_mode
+                0x0c101df0                tmr_start
+                0x0c101e78                tmr_stop
+                0x0c101f04                tmr_isrunning
+ .text          0x0c101f94      0x138 ./utils.o
+                0x0c101f94                Delay
+ .text          0x0c1020cc      0x148 c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_divsi3.o)
+                0x0c1020cc                __divsi3
+                0x0c1020cc                __aeabi_idiv
+                0x0c1021f4                __aeabi_idivmod
+ .text          0x0c102214        0x4 c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_dvmd_tls.o)
+                0x0c102214                __aeabi_idiv0
+                0x0c102214                __aeabi_ldiv0
+                0x0c102218                PROVIDE (end, .)
+START GROUP
+LOAD c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a
+LOAD c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/lib\libg.a
+LOAD c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/lib\libc.a
+LOAD c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/lib\libm.a
+LOAD c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/lib\libnosys.a
+END GROUP
+OUTPUT(pract3-parte1.elf elf32-littlearm)
+
+.glue_7         0x0c102218        0x0
+ .glue_7        0x00000000        0x0 linker stubs
+
+.glue_7t        0x0c102218        0x0
+ .glue_7t       0x00000000        0x0 linker stubs
+
+.vfp11_veneer   0x0c102218        0x0
+ .vfp11_veneer  0x00000000        0x0 linker stubs
+
+.v4_bx          0x0c102218        0x0
+ .v4_bx         0x00000000        0x0 linker stubs
+
+.debug_abbrev   0x00000000      0x597
+ .debug_abbrev  0x00000000       0x88 ./D8Led.o
+ .debug_abbrev  0x00000088       0xb7 ./gpio.o
+ .debug_abbrev  0x0000013f       0x14 ./init.o
+ .debug_abbrev  0x00000153       0xce ./intcontroller.o
+ .debug_abbrev  0x00000221       0x85 ./keyboard.o
+ .debug_abbrev  0x000002a6       0x8c ./leds.o
+ .debug_abbrev  0x00000332      0x15b ./main.o
+ .debug_abbrev  0x0000048d       0xa5 ./timer.o
+ .debug_abbrev  0x00000532       0x65 ./utils.o
+
+.debug_info     0x00000000      0xf7c
+ .debug_info    0x00000000       0xdf ./D8Led.o
+ .debug_info    0x000000df      0x291 ./gpio.o
+ .debug_info    0x00000370       0x65 ./init.o
+ .debug_info    0x000003d5      0x290 ./intcontroller.o
+ .debug_info    0x00000665       0xeb ./keyboard.o
+ .debug_info    0x00000750      0x150 ./leds.o
+ .debug_info    0x000008a0      0x37a ./main.o
+ .debug_info    0x00000c1a      0x2de ./timer.o
+ .debug_info    0x00000ef8       0x84 ./utils.o
+
+.debug_line     0x00000000      0x92e
+ .debug_line    0x00000000       0x6c ./D8Led.o
+ .debug_line    0x0000006c       0xf7 ./gpio.o
+ .debug_line    0x00000163       0x6e ./init.o
+ .debug_line    0x000001d1       0xad ./intcontroller.o
+ .debug_line    0x0000027e       0x80 ./keyboard.o
+ .debug_line    0x000002fe       0x88 ./leds.o
+ .debug_line    0x00000386      0x451 ./main.o
+ .debug_line    0x000007d7       0xec ./timer.o
+ .debug_line    0x000008c3       0x6b ./utils.o
+
+.debug_macinfo  0x00000000    0x28e6f
+ .debug_macinfo
+                0x00000000     0x50a4 ./D8Led.o
+ .debug_macinfo
+                0x000050a4     0x4bcb ./gpio.o
+ .debug_macinfo
+                0x00009c6f     0x4bed ./intcontroller.o
+ .debug_macinfo
+                0x0000e85c     0x4be5 ./keyboard.o
+ .debug_macinfo
+                0x00013441     0x4c0e ./leds.o
+ .debug_macinfo
+                0x0001804f     0x7688 ./main.o
+ .debug_macinfo
+                0x0001f6d7     0x4bcc ./timer.o
+ .debug_macinfo
+                0x000242a3     0x4bcc ./utils.o
+
+.debug_loc      0x00000000      0x7bc
+ .debug_loc     0x00000000       0x84 ./D8Led.o
+ .debug_loc     0x00000084      0x134 ./gpio.o
+ .debug_loc     0x000001b8      0x134 ./intcontroller.o
+ .debug_loc     0x000002ec       0x2c ./keyboard.o
+ .debug_loc     0x00000318      0x18c ./leds.o
+ .debug_loc     0x000004a4      0x18c ./main.o
+ .debug_loc     0x00000630      0x160 ./timer.o
+ .debug_loc     0x00000790       0x2c ./utils.o
+
+.debug_pubnames
+                0x00000000      0x322
+ .debug_pubnames
+                0x00000000       0x43 ./D8Led.o
+ .debug_pubnames
+                0x00000043       0x86 ./gpio.o
+ .debug_pubnames
+                0x000000c9       0x7d ./intcontroller.o
+ .debug_pubnames
+                0x00000146       0x1e ./keyboard.o
+ .debug_pubnames
+                0x00000164       0x93 ./leds.o
+ .debug_pubnames
+                0x000001f7       0x74 ./main.o
+ .debug_pubnames
+                0x0000026b       0x9b ./timer.o
+ .debug_pubnames
+                0x00000306       0x1c ./utils.o
+
+.debug_pubtypes
+                0x00000000      0x162
+ .debug_pubtypes
+                0x00000000       0x12 ./D8Led.o
+ .debug_pubtypes
+                0x00000012       0x43 ./gpio.o
+ .debug_pubtypes
+                0x00000055       0x43 ./intcontroller.o
+ .debug_pubtypes
+                0x00000098       0x12 ./keyboard.o
+ .debug_pubtypes
+                0x000000aa       0x2c ./leds.o
+ .debug_pubtypes
+                0x000000d6       0x41 ./main.o
+ .debug_pubtypes
+                0x00000117       0x39 ./timer.o
+ .debug_pubtypes
+                0x00000150       0x12 ./utils.o
+
+.debug_aranges  0x00000000      0x120
+ .debug_aranges
+                0x00000000       0x20 ./D8Led.o
+ .debug_aranges
+                0x00000020       0x20 ./gpio.o
+ .debug_aranges
+                0x00000040       0x20 ./init.o
+ .debug_aranges
+                0x00000060       0x20 ./intcontroller.o
+ .debug_aranges
+                0x00000080       0x20 ./keyboard.o
+ .debug_aranges
+                0x000000a0       0x20 ./leds.o
+ .debug_aranges
+                0x000000c0       0x20 ./main.o
+ .debug_aranges
+                0x000000e0       0x20 ./timer.o
+ .debug_aranges
+                0x00000100       0x20 ./utils.o
+
+.debug_str      0x00000000      0x5b2
+ .debug_str     0x00000000       0x82 ./D8Led.o
+                                 0x8f (size before relaxing)
+ .debug_str     0x00000082       0xc3 ./gpio.o
+                                0x115 (size before relaxing)
+ .debug_str     0x00000145      0x190 ./intcontroller.o
+                                0x1f9 (size before relaxing)
+ .debug_str     0x000002d5       0x3d ./keyboard.o
+                                 0x91 (size before relaxing)
+ .debug_str     0x00000312       0x73 ./leds.o
+                                 0xf3 (size before relaxing)
+ .debug_str     0x00000385      0x139 ./main.o
+                                0x1ff (size before relaxing)
+ .debug_str     0x000004be       0xc8 ./timer.o
+                                0x144 (size before relaxing)
+ .debug_str     0x00000586       0x2c ./utils.o
+                                 0x68 (size before relaxing)
+
+.comment        0x00000000       0x2a
+ .comment       0x00000000       0x2a ./D8Led.o
+                                 0x2b (size before relaxing)
+ .comment       0x00000000       0x2b ./gpio.o
+ .comment       0x00000000       0x2b ./intcontroller.o
+ .comment       0x00000000       0x2b ./keyboard.o
+ .comment       0x00000000       0x2b ./leds.o
+ .comment       0x00000000       0x2b ./main.o
+ .comment       0x00000000       0x2b ./timer.o
+ .comment       0x00000000       0x2b ./utils.o
+
+.ARM.attributes
+                0x00000000       0x30
+ .ARM.attributes
+                0x00000000       0x32 ./D8Led.o
+ .ARM.attributes
+                0x00000032       0x32 ./gpio.o
+ .ARM.attributes
+                0x00000064       0x22 ./init.o
+ .ARM.attributes
+                0x00000086       0x32 ./intcontroller.o
+ .ARM.attributes
+                0x000000b8       0x32 ./keyboard.o
+ .ARM.attributes
+                0x000000ea       0x32 ./leds.o
+ .ARM.attributes
+                0x0000011c       0x32 ./main.o
+ .ARM.attributes
+                0x0000014e       0x32 ./timer.o
+ .ARM.attributes
+                0x00000180       0x32 ./utils.o
+ .ARM.attributes
+                0x000001b2       0x1a c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_divsi3.o)
+ .ARM.attributes
+                0x000001cc       0x18 c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_dvmd_tls.o)
+
+.debug_frame    0x00000000      0x65c
+ .debug_frame   0x00000000       0x70 ./D8Led.o
+ .debug_frame   0x00000070       0xf0 ./gpio.o
+ .debug_frame   0x00000160       0xf0 ./intcontroller.o
+ .debug_frame   0x00000250       0x34 ./keyboard.o
+ .debug_frame   0x00000284      0x130 ./leds.o
+ .debug_frame   0x000003b4      0x148 ./main.o
+ .debug_frame   0x000004fc      0x110 ./timer.o
+ .debug_frame   0x0000060c       0x30 ./utils.o
+ .debug_frame   0x0000063c       0x20 c:/software/electronica/arm/eclipsearm/sourcery-g++-lite-arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2\libgcc.a(_divsi3.o)

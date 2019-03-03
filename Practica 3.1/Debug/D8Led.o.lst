@@ -1,0 +1,263 @@
+   1              		.cpu arm7tdmi
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 6
+  10              		.eabi_attribute 18, 4
+  11              		.file	"D8Led.c"
+  21              	.Ltext0:
+  22              		.file 1 "../D8Led.c"
+ 1783              		.align	2
+ 1786              	Segments:
+ 1787 0000 80000000 		.word	128
+ 1788 0004 40000000 		.word	64
+ 1789 0008 20000000 		.word	32
+ 1790 000c 08000000 		.word	8
+ 1791 0010 04000000 		.word	4
+ 1792 0014 01000000 		.word	1
+ 1793 0018 02000000 		.word	2
+ 1794 001c 10000000 		.word	16
+ 1795              		.align	2
+ 1798              	Digits:
+ 1799 0020 ED000000 		.word	237
+ 1800 0024 60000000 		.word	96
+ 1801 0028 CE000000 		.word	206
+ 1802 002c EA000000 		.word	234
+ 1803 0030 63000000 		.word	99
+ 1804 0034 AB000000 		.word	171
+ 1805 0038 AF000000 		.word	175
+ 1806 003c E0000000 		.word	224
+ 1807 0040 EF000000 		.word	239
+ 1808 0044 E3000000 		.word	227
+ 1809 0048 E7000000 		.word	231
+ 1810 004c 2F000000 		.word	47
+ 1811 0050 0E000000 		.word	14
+ 1812 0054 6E000000 		.word	110
+ 1813 0058 8F000000 		.word	143
+ 1814 005c 87000000 		.word	135
+ 1815              		.text
+ 1816              		.align	2
+ 1817              		.global	D8Led_init
+ 1819              	D8Led_init:
+ 1820              	.LFB0:
+   1:../D8Led.c    **** //Copiar código completo de la práctica 2
+   2:../D8Led.c    **** #include "44b.h"
+   3:../D8Led.c    **** #include "D8Led.h"
+   4:../D8Led.c    **** 
+   5:../D8Led.c    **** /*
+   6:../D8Led.c    ****  * Máscaras útiles para el uso del display de 8 segmentos
+   7:../D8Led.c    ****  * Cada bit representa un segmento. En la máscara ponemos
+   8:../D8Led.c    ****  * un 1 si queremos que se encienda dicho segmento. Como
+   9:../D8Led.c    ****  * el display funciona con lógica invertida, nos toca
+  10:../D8Led.c    ****  * invertir el valor al escribir en el puerto.
+  11:../D8Led.c    ****  */
+  12:../D8Led.c    **** #define SEGMENT_A		0x80
+  13:../D8Led.c    **** #define SEGMENT_B		0x40
+  14:../D8Led.c    **** #define SEGMENT_C		0x20
+  15:../D8Led.c    **** #define SEGMENT_D		0x08
+  16:../D8Led.c    **** #define SEGMENT_E		0x04
+  17:../D8Led.c    **** #define SEGMENT_F		0x02
+  18:../D8Led.c    **** #define SEGMENT_G		0x01
+  19:../D8Led.c    **** #define SEGMENT_P		0x10
+  20:../D8Led.c    **** 
+  21:../D8Led.c    **** #define DIGIT_0  ( SEGMENT_A | SEGMENT_B | SEGMENT_C | SEGMENT_D | SEGMENT_E | SEGMENT_G )
+  22:../D8Led.c    **** #define DIGIT_1  ( SEGMENT_B | SEGMENT_C )
+  23:../D8Led.c    **** #define DIGIT_2  ( SEGMENT_A | SEGMENT_B | SEGMENT_F | SEGMENT_E | SEGMENT_D )
+  24:../D8Led.c    **** #define DIGIT_3  ( SEGMENT_A | SEGMENT_B | SEGMENT_C | SEGMENT_D | SEGMENT_F )
+  25:../D8Led.c    **** #define DIGIT_4  ( SEGMENT_F | SEGMENT_B | SEGMENT_C | SEGMENT_G )
+  26:../D8Led.c    **** #define DIGIT_5  ( SEGMENT_A | SEGMENT_C | SEGMENT_D | SEGMENT_G | SEGMENT_F )
+  27:../D8Led.c    **** #define DIGIT_6  ( SEGMENT_A | SEGMENT_C | SEGMENT_D | SEGMENT_E | SEGMENT_F | SEGMENT_G )
+  28:../D8Led.c    **** #define DIGIT_7  ( SEGMENT_A | SEGMENT_B | SEGMENT_C )
+  29:../D8Led.c    **** #define DIGIT_8  ( SEGMENT_A | SEGMENT_B | SEGMENT_C | SEGMENT_D | SEGMENT_E | SEGMENT_F | SEGMENT_
+  30:../D8Led.c    **** #define DIGIT_9  ( SEGMENT_A | SEGMENT_B | SEGMENT_C | SEGMENT_F | SEGMENT_G )
+  31:../D8Led.c    **** #define DIGIT_A  ( SEGMENT_A | SEGMENT_B | SEGMENT_C | SEGMENT_E | SEGMENT_F | SEGMENT_G )
+  32:../D8Led.c    **** #define DIGIT_B  ( SEGMENT_C | SEGMENT_D | SEGMENT_E | SEGMENT_F | SEGMENT_G )
+  33:../D8Led.c    **** #define DIGIT_C  ( SEGMENT_D | SEGMENT_E | SEGMENT_F )
+  34:../D8Led.c    **** #define DIGIT_D  ( SEGMENT_B | SEGMENT_C | SEGMENT_D | SEGMENT_E | SEGMENT_F )
+  35:../D8Led.c    **** #define DIGIT_E  ( SEGMENT_A | SEGMENT_D | SEGMENT_E | SEGMENT_F | SEGMENT_G )
+  36:../D8Led.c    **** #define DIGIT_F  ( SEGMENT_A | SEGMENT_E | SEGMENT_F | SEGMENT_G )
+  37:../D8Led.c    **** 
+  38:../D8Led.c    **** 
+  39:../D8Led.c    **** /* Tablas para facilitar el uso del display */
+  40:../D8Led.c    **** 
+  41:../D8Led.c    **** static unsigned int Segments[] = { SEGMENT_A, SEGMENT_B, SEGMENT_C, SEGMENT_D,
+  42:../D8Led.c    **** 	                               SEGMENT_E, SEGMENT_G, SEGMENT_F, SEGMENT_P };
+  43:../D8Led.c    **** 
+  44:../D8Led.c    **** static unsigned int Digits[] = { DIGIT_0, DIGIT_1, DIGIT_2, DIGIT_3,
+  45:../D8Led.c    **** 	 							 DIGIT_4, DIGIT_5, DIGIT_6, DIGIT_7,
+  46:../D8Led.c    **** 								 DIGIT_8, DIGIT_9, DIGIT_A, DIGIT_B,
+  47:../D8Led.c    **** 								 DIGIT_C, DIGIT_D, DIGIT_E, DIGIT_F };
+  48:../D8Led.c    **** 
+  49:../D8Led.c    **** void D8Led_init(void)
+  50:../D8Led.c    **** {
+ 1821              		.loc 1 50 0
+ 1822              		.cfi_startproc
+ 1823              		@ Function supports interworking.
+ 1824              		@ args = 0, pretend = 0, frame = 0
+ 1825              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1826 0000 0DC0A0E1 		mov	ip, sp
+ 1827              	.LCFI0:
+ 1828              		.cfi_def_cfa_register 12
+ 1829 0004 00D82DE9 		stmfd	sp!, {fp, ip, lr, pc}
+ 1830 0008 04B04CE2 		sub	fp, ip, #4
+ 1831              		.cfi_offset 14, -8
+ 1832              		.cfi_offset 13, -12
+ 1833              		.cfi_offset 11, -16
+ 1834              	.LCFI1:
+ 1835              		.cfi_def_cfa 11, 4
+  51:../D8Led.c    ****     LED8ADDR = ~0 ;
+ 1836              		.loc 1 51 0
+ 1837 000c 8537A0E3 		mov	r3, #34865152
+ 1838 0010 0020E0E3 		mvn	r2, #0
+ 1839 0014 0020C3E5 		strb	r2, [r3, #0]
+  52:../D8Led.c    **** }
+ 1840              		.loc 1 52 0
+ 1841 0018 0CD04BE2 		sub	sp, fp, #12
+ 1842 001c 00689DE8 		ldmfd	sp, {fp, sp, lr}
+ 1843 0020 1EFF2FE1 		bx	lr
+ 1844              		.cfi_endproc
+ 1845              	.LFE0:
+ 1847              		.align	2
+ 1848              		.global	D8Led_segment
+ 1850              	D8Led_segment:
+ 1851              	.LFB1:
+  53:../D8Led.c    **** 
+  54:../D8Led.c    **** void D8Led_segment(int value)
+  55:../D8Led.c    **** {
+ 1852              		.loc 1 55 0
+ 1853              		.cfi_startproc
+ 1854              		@ Function supports interworking.
+ 1855              		@ args = 0, pretend = 0, frame = 8
+ 1856              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1857 0024 0DC0A0E1 		mov	ip, sp
+ 1858              	.LCFI2:
+ 1859              		.cfi_def_cfa_register 12
+ 1860 0028 00D82DE9 		stmfd	sp!, {fp, ip, lr, pc}
+ 1861 002c 04B04CE2 		sub	fp, ip, #4
+ 1862              		.cfi_offset 14, -8
+ 1863              		.cfi_offset 13, -12
+ 1864              		.cfi_offset 11, -16
+ 1865              	.LCFI3:
+ 1866              		.cfi_def_cfa 11, 4
+ 1867 0030 08D04DE2 		sub	sp, sp, #8
+ 1868 0034 10000BE5 		str	r0, [fp, #-16]
+  56:../D8Led.c    **** 	if( (value >= 0) && (value < 8) ){
+ 1869              		.loc 1 56 0
+ 1870 0038 10301BE5 		ldr	r3, [fp, #-16]
+ 1871 003c 000053E3 		cmp	r3, #0
+ 1872 0040 0A0000BA 		blt	.L2
+ 1873              		.loc 1 56 0 is_stmt 0 discriminator 1
+ 1874 0044 10301BE5 		ldr	r3, [fp, #-16]
+ 1875 0048 070053E3 		cmp	r3, #7
+ 1876 004c 070000CA 		bgt	.L2
+  57:../D8Led.c    **** 		LED8ADDR = ~Segments[value];
+ 1877              		.loc 1 57 0 is_stmt 1
+ 1878 0050 8537A0E3 		mov	r3, #34865152
+ 1879 0054 20209FE5 		ldr	r2, .L4
+ 1880 0058 10101BE5 		ldr	r1, [fp, #-16]
+ 1881 005c 012192E7 		ldr	r2, [r2, r1, asl #2]
+ 1882 0060 FF2002E2 		and	r2, r2, #255
+ 1883 0064 0220E0E1 		mvn	r2, r2
+ 1884 0068 FF2002E2 		and	r2, r2, #255
+ 1885 006c 0020C3E5 		strb	r2, [r3, #0]
+ 1886              	.L2:
+  58:../D8Led.c    **** 	}
+  59:../D8Led.c    **** 		//COMPLETAR: debemos escribir en el display (LED8ADDR) el valor
+  60:../D8Led.c    **** 		//correcto para que se ilumine el segmento que está en la posición
+  61:../D8Led.c    **** 		//value del array Segments. Hay que tener en cuenta que el display
+  62:../D8Led.c    **** 		//usa lógica invertida (0 enciende, 1 apaga)
+  63:../D8Led.c    **** 
+  64:../D8Led.c    **** 
+  65:../D8Led.c    **** }
+ 1887              		.loc 1 65 0
+ 1888 0070 0CD04BE2 		sub	sp, fp, #12
+ 1889 0074 00689DE8 		ldmfd	sp, {fp, sp, lr}
+ 1890 0078 1EFF2FE1 		bx	lr
+ 1891              	.L5:
+ 1892              		.align	2
+ 1893              	.L4:
+ 1894 007c 00000000 		.word	Segments
+ 1895              		.cfi_endproc
+ 1896              	.LFE1:
+ 1898              		.align	2
+ 1899              		.global	D8Led_digit
+ 1901              	D8Led_digit:
+ 1902              	.LFB2:
+  66:../D8Led.c    **** 
+  67:../D8Led.c    **** void D8Led_digit(int value)
+  68:../D8Led.c    **** {
+ 1903              		.loc 1 68 0
+ 1904              		.cfi_startproc
+ 1905              		@ Function supports interworking.
+ 1906              		@ args = 0, pretend = 0, frame = 8
+ 1907              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1908 0080 0DC0A0E1 		mov	ip, sp
+ 1909              	.LCFI4:
+ 1910              		.cfi_def_cfa_register 12
+ 1911 0084 00D82DE9 		stmfd	sp!, {fp, ip, lr, pc}
+ 1912 0088 04B04CE2 		sub	fp, ip, #4
+ 1913              		.cfi_offset 14, -8
+ 1914              		.cfi_offset 13, -12
+ 1915              		.cfi_offset 11, -16
+ 1916              	.LCFI5:
+ 1917              		.cfi_def_cfa 11, 4
+ 1918 008c 08D04DE2 		sub	sp, sp, #8
+ 1919 0090 10000BE5 		str	r0, [fp, #-16]
+  69:../D8Led.c    **** 	if( (value >= 0) && (value < 16) ){
+ 1920              		.loc 1 69 0
+ 1921 0094 10301BE5 		ldr	r3, [fp, #-16]
+ 1922 0098 000053E3 		cmp	r3, #0
+ 1923 009c 0A0000BA 		blt	.L6
+ 1924              		.loc 1 69 0 is_stmt 0 discriminator 1
+ 1925 00a0 10301BE5 		ldr	r3, [fp, #-16]
+ 1926 00a4 0F0053E3 		cmp	r3, #15
+ 1927 00a8 070000CA 		bgt	.L6
+  70:../D8Led.c    **** 		LED8ADDR = ~Digits[value];
+ 1928              		.loc 1 70 0 is_stmt 1
+ 1929 00ac 8537A0E3 		mov	r3, #34865152
+ 1930 00b0 20209FE5 		ldr	r2, .L8
+ 1931 00b4 10101BE5 		ldr	r1, [fp, #-16]
+ 1932 00b8 012192E7 		ldr	r2, [r2, r1, asl #2]
+ 1933 00bc FF2002E2 		and	r2, r2, #255
+ 1934 00c0 0220E0E1 		mvn	r2, r2
+ 1935 00c4 FF2002E2 		and	r2, r2, #255
+ 1936 00c8 0020C3E5 		strb	r2, [r3, #0]
+ 1937              	.L6:
+  71:../D8Led.c    **** 	}
+  72:../D8Led.c    **** 		//COMPLETAR: debemos escribir en el display (LED8ADDR) el valor
+  73:../D8Led.c    **** 		// correcto para que se ilumine el dígito que está en la posición
+  74:../D8Led.c    **** 		//value del array Digits. Hay que tener en cuenta que el display
+  75:../D8Led.c    **** 		//usa lógica invertida (0 enciende, 1 apaga)
+  76:../D8Led.c    **** 
+  77:../D8Led.c    **** 
+  78:../D8Led.c    **** }
+ 1938              		.loc 1 78 0
+ 1939 00cc 0CD04BE2 		sub	sp, fp, #12
+ 1940 00d0 00689DE8 		ldmfd	sp, {fp, sp, lr}
+ 1941 00d4 1EFF2FE1 		bx	lr
+ 1942              	.L9:
+ 1943              		.align	2
+ 1944              	.L8:
+ 1945 00d8 20000000 		.word	Digits
+ 1946              		.cfi_endproc
+ 1947              	.LFE2:
+ 1949              	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 D8Led.c
+C:\Users\USUARI~1\AppData\Local\Temp\ccrwHuTi.s:1783   .data:00000000 $d
+C:\Users\USUARI~1\AppData\Local\Temp\ccrwHuTi.s:1786   .data:00000000 Segments
+C:\Users\USUARI~1\AppData\Local\Temp\ccrwHuTi.s:1798   .data:00000020 Digits
+C:\Users\USUARI~1\AppData\Local\Temp\ccrwHuTi.s:1816   .text:00000000 $a
+C:\Users\USUARI~1\AppData\Local\Temp\ccrwHuTi.s:1819   .text:00000000 D8Led_init
+C:\Users\USUARI~1\AppData\Local\Temp\ccrwHuTi.s:1850   .text:00000024 D8Led_segment
+C:\Users\USUARI~1\AppData\Local\Temp\ccrwHuTi.s:1894   .text:0000007c $d
+C:\Users\USUARI~1\AppData\Local\Temp\ccrwHuTi.s:1898   .text:00000080 $a
+C:\Users\USUARI~1\AppData\Local\Temp\ccrwHuTi.s:1901   .text:00000080 D8Led_digit
+C:\Users\USUARI~1\AppData\Local\Temp\ccrwHuTi.s:1945   .text:000000d8 $d
+                     .debug_frame:00000010 $d
+
+NO UNDEFINED SYMBOLS
